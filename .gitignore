@@ -1,0 +1,40 @@
+# JSM Electrical: Git tracks this site's own code, not WordPress.
+# Core, wp-config.php (keys, salts, database login), .htaccess, uploads and the
+# database stay out: core is installed on each site, the rest differs per site.
+
+# Ignore everything at the root...
+/*
+# ...except these.
+!/.gitignore
+!/README.md
+!/CLAUDE.md
+!/.claude/
+!/wp-content/
+
+# Claude Code: personal settings stay on this PC.
+/.claude/settings.local.json
+
+# wp-content: only themes, plugins and must-use plugins.
+# (uploads, upgrade, cache, languages, debug.log and drop-ins stay out.)
+/wp-content/*
+!/wp-content/themes/
+!/wp-content/plugins/
+!/wp-content/mu-plugins/
+
+# Shipped with WordPress: core updates replace them. A child theme is ours.
+/wp-content/themes/twenty*/
+!/wp-content/themes/*-child/
+/wp-content/themes/index.php
+/wp-content/plugins/akismet/
+/wp-content/plugins/hello.php
+/wp-content/plugins/index.php
+
+# Anywhere: database exports, logs, build folders, OS files.
+*.sql
+*.sql.gz
+*.log
+node_modules/
+.env
+Thumbs.db
+desktop.ini
+.DS_Store
