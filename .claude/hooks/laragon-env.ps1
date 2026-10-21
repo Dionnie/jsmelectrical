@@ -1,9 +1,10 @@
 <#
-  Session-start report for Claude Code. Detects the live Laragon setup for this project (services,
-  versions, the PHP Apache really runs, the site address, logs, WordPress state) and hands it to
-  Claude as context, so CLAUDE.md never has to name a version or a path.
+  Session-start check for Claude Code. Detects the live Laragon setup for this project (services,
+  versions, the PHP Apache really runs, the site address, logs, WordPress state) and writes it to
+  .env.local. Claude gets only a summary, the warnings, and Laragon's PATH line while Claude's own
+  PATH needs it, so CLAUDE.md never has to name a version or a path.
   Wired up in .claude/settings.json (SessionStart). By hand: .\.claude\hooks\laragon-env.ps1 -Text
-  Reads only: it changes nothing in Laragon, WordPress or the database.
+  Reads only, apart from .env.local: it changes nothing in Laragon, WordPress or the database.
 #>
 param([switch]$Text)
 $ErrorActionPreference = 'SilentlyContinue'
@@ -40,6 +41,7 @@ function Leaf([string]$p) { if ($p) { Split-Path $p -Leaf } }
 
 $warn = New-Object System.Collections.Generic.List[string]
 $plainPhp = (Get-Command php.exe -CommandType Application | Select-Object -First 1).Source
+$plainWp = (Get-Command wp -CommandType Application | Select-Object -First 1).Source
 
 # Laragon's terminal PATH: the same laragon.cmd that Cmder and the VS Code "Laragon" profile run.
 $loader = Join-Path $root 'bin\laragon\laragon.cmd'
@@ -102,6 +104,8 @@ if ($plainPhp -and -not (Same (Split-Path $plainPhp -Parent) $sitePhpDir)) {
     if ($r) { $plainVer = $r.Out }
     $warn.Add("Claude's plain PATH runs PHP $plainVer, not the site's $($site.Version): load Laragon's PATH before php or wp, or WP-CLI and php -l test against the wrong PHP.")
 }
+# Claude needs Laragon's PATH line until its own PATH has the site's PHP and WP-CLI.
+$needLoader = -not ($plainPhp -and (Same (Split-Path $plainPhp -Parent) $sitePhpDir) -and $plainWp)
 
 # Versions of the other services.
 $apacheVer = $null
@@ -134,41 +138,12 @@ $url = "${scheme}://$host_/"
 $code = (Run "$env:SystemRoot\System32\curl.exe" @('-sk', '-o', 'NUL', '-w', '%{http_code}', '--max-time', '8', $url) 12000).Out
 if ($code -notmatch '^[23]') { $warn.Add("$url answered HTTP $code.") }
 
-# The report.
 $now = Get-Date -Format 'yyyy-MM-dd HH:mm'
-$L = New-Object System.Collections.Generic.List[string]
-$L.Add("Laragon setup for this project, detected at session start ($now) by .claude/hooks/laragon-env.ps1. Trust it over any version or path written elsewhere. If the user changes Laragon (PHP version, services, sites), re-run it: .\.claude\hooks\laragon-env.ps1 -Text")
-$state = 'running'; if (-not (Proc 'laragon.exe')) { $state = 'NOT running' }
-$L.Add("- Laragon: $state, root $root")
-if ($nginx) { $L.Add("- Web server: Nginx, running (ports $((Ports 'nginx.exe') -join ', '))") }
-elseif ($apache) { $L.Add("- Web server: Apache $apacheVer, running (ports $((Ports 'httpd.exe') -join ', '))") }
-else { $L.Add("- Web server: Apache $apacheVer, NOT running") }
-$L.Add("- Site: $url answers HTTP $code (virtual host: $(Leaf $vhost.FullName))")
-if ($site) { $L.Add("- PHP the site runs: $($site.Version) ($($site.Dir)); memory_limit $($site.Memory), upload_max_filesize $($site.Upload), post_max_size $($site.Post)") }
-if ($cliVer) { $L.Add("- PHP on Laragon's PATH: $cliVer ($phpCliDir)") } else { $L.Add("- PHP on Laragon's PATH: the same") }
-if ($plainVer) { $L.Add("- PHP on Claude's plain PATH: $plainVer ($plainPhp): differs from the site") } else { $L.Add("- PHP on Claude's plain PATH: the same as the site") }
-$state = 'NOT running'; if ($mysqld) { $state = "running (port $((Ports 'mysqld.exe') -join ', '))" }
-$L.Add("- MySQL: $mysqlVer, $state")
-if ($mailpitExe) {
-    $state = 'NOT running'
-    if ($mailpit) { $ui = $mailPorts | Where-Object { $_ -ne 1025 } | Select-Object -First 1; $state = "running, inbox http://localhost:$ui/ (listening on $($mailPorts -join ', '))" }
-    $L.Add("- Mailpit $mailpitVer`: $state. PHP's mail() delivers there, whatever the address")
-}
-$tools = @()
-if ($wpcli) { $tools += "WP-CLI ($wpcli)" }
-if (LDir 'composer*') { $tools += 'Composer' }
-if (LDir 'nodejs\*') { $tools += "Node $(Leaf (LDir 'nodejs\*'))" }
-if (LDir 'python\*') { $tools += "Python $(Leaf (LDir 'python\*'))" }
-if (LDir 'git\*') { $tools += "Laragon's Git" }
-$L.Add("- On Laragon's PATH: MySQL client, $($tools -join ', ')")
-$logs = @()
-if ($site.ErrorLog) { $logs += "PHP $($site.ErrorLog) (shared by every Laragon site and by WP-CLI)" }
-if ($apacheBin -and -not $nginx) { $logs += "Apache $(Join-Path (Split-Path $apacheBin -Parent) 'logs\error_log')" }
-if ($mysqlLog) { $logs += "MySQL $mysqlLog" }
-$L.Add("- Logs: $($logs -join '; ')")
-$L.Add("- Database backups go to: $(Join-Path $root "backup\$name")\")
-$L.Add("- Load Laragon's PATH at the start of every PowerShell command that runs php, wp, mysql or composer:")
-$L.Add("  `$env:PATH = (cmd /c 'call $loader && set PATH') -match '^PATH=' -replace '^PATH=', ''")
+$inbox = $null
+if ($mailpit) { $inbox = "http://localhost:$($mailPorts | Where-Object { $_ -ne 1025 } | Select-Object -First 1)/" }
+$apacheLog = $null
+if ($apacheBin -and -not $nginx) { $apacheLog = Join-Path (Split-Path $apacheBin -Parent) 'logs\error_log' }
+$backup = Join-Path $root "backup\$name"
 
 # WordPress, read through WP-CLI on the site's own PHP (plugins and theme code not loaded).
 $versionFile = Join-Path $project 'wp-includes\version.php'
@@ -177,7 +152,6 @@ if (Test-Path $versionFile) {
     $wpVer = [regex]::Match($vf, "\`$wp_version = '([^']+)'").Groups[1].Value
     $reqPhp = [regex]::Match($vf, "\`$required_php_version = '([^']+)'").Groups[1].Value
     try { if ($site -and [version]($site.Version -replace '[^\d.].*$') -lt [version]$reqPhp) { $warn.Add("WordPress $wpVer needs PHP $reqPhp+, but the site runs $($site.Version).") } } catch {}
-    $L.Add("WordPress (read through WP-CLI on the site's PHP):")
     $wp = $null
     if ($mysqld -and $wpcli -and $site) {
         $probe = Join-Path $env:TEMP "laragon-env-probe-$PID.php"
@@ -190,16 +164,20 @@ $parent = $t->parent();
 $plugins = array();
 foreach ( (array) get_option( 'active_plugins' ) as $f ) {
     $d = get_plugin_data( WP_PLUGIN_DIR . '/' . $f, false, false );
-    $plugins[] = trim( ( $d['Name'] ? $d['Name'] : $f ) . ' ' . $d['Version'] );
+    $slug = dirname( $f );
+    $plugins[] = array(
+        'slug'  => '.' === $slug ? basename( $f, '.php' ) : $slug,
+        'label' => trim( ( $d['Name'] ? $d['Name'] : $f ) . ' ' . $d['Version'] ),
+    );
 }
 $tz = get_option( 'timezone_string' );
 echo json_encode( array(
     'siteurl'    => get_option( 'siteurl' ),
     'home'       => get_option( 'home' ),
     'env'        => wp_get_environment_type(),
-    'db'         => DB_NAME . ' as ' . DB_USER . ( '' === DB_PASSWORD ? ' (no password)' : ' (password set)' ) . ' on ' . DB_HOST . ', table prefix ' . $wpdb->prefix,
-    'theme'      => $t->get( 'Name' ) . ' ' . $t->get( 'Version' ) . ' (' . get_stylesheet() . ')',
-    'parent'     => $parent ? $parent->get( 'Name' ) . ' ' . $parent->get( 'Version' ) : '',
+    'db'         => array( 'name' => DB_NAME, 'user' => DB_USER, 'password' => '' !== DB_PASSWORD, 'host' => DB_HOST, 'prefix' => $wpdb->prefix ),
+    'theme'      => array( 'name' => $t->get( 'Name' ), 'version' => $t->get( 'Version' ), 'slug' => get_stylesheet() ),
+    'parent'     => $parent ? array( 'name' => $parent->get( 'Name' ), 'version' => $parent->get( 'Version' ), 'slug' => get_template() ) : null,
     'block'      => method_exists( $t, 'is_block_theme' ) && $t->is_block_theme(),
     'plugins'    => $plugins,
     'mu'         => array_keys( get_mu_plugins() ),
@@ -216,32 +194,127 @@ echo json_encode( array(
         else { $why = 'timed out'; if ($r) { $why = (($r.Err + "`n" + $r.Out).Trim() -split "`n")[0] }; $warn.Add("WP-CLI couldn't read WordPress: $why") }
     }
     if ($wp) {
-        $onoff = { param($b) if ($b) { 'on' } else { 'off' } }
-        $L.Add("- Core $wpVer (needs PHP $reqPhp+); siteurl $($wp.siteurl), home $($wp.home); environment type $($wp.env)")
-        $L.Add("- Database: $($wp.db)")
-        $kind = 'classic theme'; if ($wp.block) { $kind = 'block theme' }
-        $par = 'no parent'; if ($wp.parent) { $par = "child of $($wp.parent)" }
-        $L.Add("- Active theme: $($wp.theme), $kind, $par")
-        $pl = 'none'; if (@($wp.plugins).Count) { $pl = @($wp.plugins) -join ', ' }
-        $mu = 'none'; if (@($wp.mu).Count) { $mu = @($wp.mu) -join ', ' }
-        $L.Add("- Active plugins: $pl; must-use plugins: $mu")
-        $ed = 'none'; if (@($wp.editor).Count) { $ed = (@($wp.editor) | ForEach-Object { "$($_.post_type) $($_.n)" }) -join ', ' }
-        $L.Add("- Site Editor posts in the database (they override the theme's files): $ed")
         $perm = 'plain'; if ($wp.permalinks) { $perm = $wp.permalinks }
         $seo = 'discouraged'; if ($wp.public) { $seo = 'allowed' }
-        $L.Add("- Permalinks $perm; timezone $($wp.timezone); search engines $seo; WP_DEBUG $(& $onoff $wp.debug[0]) (log $(& $onoff $wp.debug[1]), display $(& $onoff $wp.debug[2]))")
-    } else {
-        $L.Add("- Core $wpVer (needs PHP $reqPhp+); the rest is unknown until WP-CLI can reach the database")
     }
 }
 
-if ($warn.Count) { $L.Add('Warnings:'); foreach ($w in $warn) { $L.Add("- $w") } }
-$report = $L -join "`n"
+# .env.local is rewritten only when this script made it, so a developer's own file is never lost.
+$envFile = Join-Path $project '.env.local'
+$mine = '.claude/hooks/laragon-env.ps1'
+$ours = -not (Test-Path $envFile) -or ((Get-Content $envFile -TotalCount 1) -like "*$mine*")
+if (-not $ours) { $warn.Add(".env.local wasn't written by $mine, so it was left as it is.") }
 
-if ($Text) { $report; exit 0 }
+# The same facts for developers, as .env.local: KEY=value lines that dotenv tools can load too.
+# No key is a variable that PHP, MySQL, Git, WordPress or WP-CLI read from the environment.
+$E = New-Object System.Collections.Generic.List[string]
+function Key([string]$k, $v) {
+    if ($v -is [bool]) { $v = "$v".ToLower() } elseif ($v -is [array]) { $v = $v -join ',' }
+    $v = "$v"
+    if ($v -notmatch '^[\w.,:/\\@+-]*$') { $q = "'"; if ($v -match "'") { $q = '"' }; $v = "$q$v$q" }
+    $E.Add("$k=$v")
+}
+$E.Add("# Laragon setup for $name, detected $now by $mine.")
+$E.Add('# Rewritten at every Claude Code session start, so edits here are lost. Local to this PC; Git ignores it.')
+$E.Add('# Refresh by hand, from the project root: powershell -NoProfile -ExecutionPolicy Bypass -File .claude\hooks\laragon-env.ps1 -Text')
+$E.Add('# Values with spaces or symbols are single-quoted, so dotenv tools read them literally.')
+$E.Add(''); $E.Add('# Site')
+Key 'SITE_URL' $url
+Key 'SITE_HTTP_STATUS' $code
+Key 'SITE_DIR' $project
+Key 'SITE_VHOST' $vhost.FullName
+$E.Add(''); $E.Add("# Laragon. Its terminal PATH comes from LARAGON_CMD; to load it in another PowerShell:")
+$E.Add("#   `$env:PATH = (cmd /c 'call $loader && set PATH') -match '^PATH=' -replace '^PATH=', ''")
+Key 'LARAGON_ROOT' $root
+Key 'LARAGON_RUNNING' ([bool](Proc 'laragon.exe'))
+Key 'LARAGON_CMD' $loader
+$E.Add(''); $E.Add('# Web server')
+if ($nginx) { Key 'WEB_SERVER' 'nginx'; Key 'WEB_SERVER_VERSION' ''; Key 'WEB_SERVER_RUNNING' $true; Key 'WEB_SERVER_PORTS' (Ports 'nginx.exe') }
+else { Key 'WEB_SERVER' 'apache'; Key 'WEB_SERVER_VERSION' $apacheVer; Key 'WEB_SERVER_RUNNING' ([bool]$apache); Key 'WEB_SERVER_PORTS' (Ports 'httpd.exe') }
+$E.Add(''); $E.Add('# PHP the site runs')
+Key 'PHP_VERSION' $site.Version
+Key 'PHP_DIR' $sitePhpDir
+Key 'PHP_MEMORY_LIMIT' $site.Memory
+Key 'PHP_UPLOAD_MAX_FILESIZE' $site.Upload
+Key 'PHP_POST_MAX_SIZE' $site.Post
+if ($cliVer) { $E.Add("# Laragon's terminal PATH has another PHP: reload Laragon or re-select PHP in its menu"); Key 'PHP_TERMINAL_VERSION' $cliVer; Key 'PHP_TERMINAL_DIR' $phpCliDir }
+if ($plainVer) { $E.Add("# Outside Laragon's terminal, the system PATH runs another PHP"); Key 'PHP_SYSTEM_VERSION' $plainVer; Key 'PHP_SYSTEM_BIN' $plainPhp }
+$E.Add(''); $E.Add('# MySQL. Database backups (wp db export) go to DB_BACKUP_DIR')
+Key 'MYSQL_VERSION' $mysqlVer
+Key 'MYSQL_RUNNING' ([bool]$mysqld)
+Key 'MYSQL_PORTS' (Ports 'mysqld.exe')
+Key 'DB_BACKUP_DIR' $backup
+if ($wp) {
+    $pw = 'none'; if ($wp.db.password) { $pw = 'set there, not copied here' }
+    $E.Add("# The site's database, from wp-config.php. Password: $pw")
+    Key 'DB_NAME' $wp.db.name
+    Key 'DB_USER' $wp.db.user
+    Key 'DB_HOST' $wp.db.host
+    Key 'DB_TABLE_PREFIX' $wp.db.prefix
+}
+if ($mailpitExe) {
+    $E.Add(''); $E.Add("# Mailpit: PHP's mail() delivers here, whatever the address")
+    Key 'MAILPIT_VERSION' $mailpitVer
+    Key 'MAILPIT_RUNNING' ([bool]$mailpit)
+    Key 'MAILPIT_URL' $inbox
+    Key 'MAILPIT_PORTS' $mailPorts
+}
+$E.Add(''); $E.Add("# Tools on Laragon's PATH")
+Key 'TOOL_WPCLI' $wpcli
+Key 'TOOL_MYSQL' $mysqlBin
+Key 'TOOL_COMPOSER' (LDir 'composer*')
+Key 'TOOL_NODE' (LDir 'nodejs\*')
+Key 'TOOL_PYTHON' (LDir 'python\*')
+Key 'TOOL_GIT' (LDir 'git\*')
+$E.Add(''); $E.Add("# Logs. PHP's is shared by every Laragon site and by WP-CLI")
+Key 'PHP_ERROR_LOG' $site.ErrorLog
+if ($apacheLog) { Key 'APACHE_ERROR_LOG' $apacheLog }
+Key 'MYSQL_ERROR_LOG' $mysqlLog
+if (Test-Path $versionFile) {
+    $E.Add(''); $E.Add("# WordPress, read through WP-CLI on the site's PHP")
+    Key 'WP_VERSION' $wpVer
+    Key 'WP_REQUIRES_PHP' $reqPhp
+    if ($wp) {
+        Key 'WP_SITEURL' $wp.siteurl
+        Key 'WP_HOME' $wp.home
+        Key 'WP_ENVIRONMENT' $wp.env
+        Key 'WP_THEME' $wp.theme.slug
+        Key 'WP_THEME_NAME' $wp.theme.name
+        Key 'WP_THEME_VERSION' $wp.theme.version
+        Key 'WP_BLOCK_THEME' ([bool]$wp.block)
+        Key 'WP_PARENT_THEME' $wp.parent.slug
+        Key 'WP_PLUGINS' @($wp.plugins | ForEach-Object { $_.slug })
+        Key 'WP_MU_PLUGINS' @($wp.mu)
+        Key 'WP_PERMALINKS' $perm
+        Key 'WP_TIMEZONE' $wp.timezone
+        Key 'WP_SEARCH_ENGINES' $seo
+        Key 'WP_DEBUG' ([bool]$wp.debug[0])
+        Key 'WP_DEBUG_LOG' ([bool]$wp.debug[1])
+        Key 'WP_DEBUG_DISPLAY' ([bool]$wp.debug[2])
+        $n = @{}; foreach ($x in @($wp.editor)) { $n[$x.post_type] = [int]$x.n }
+        $E.Add("# Site Editor posts in the database (they override the theme's files)")
+        Key 'WP_EDITOR_TEMPLATES' ([int]$n['wp_template'])
+        Key 'WP_EDITOR_TEMPLATE_PARTS' ([int]$n['wp_template_part'])
+        Key 'WP_EDITOR_GLOBAL_STYLES' ([int]$n['wp_global_styles'])
+        Key 'WP_EDITOR_NAVIGATION' ([int]$n['wp_navigation'])
+    } else {
+        $E.Add('# The rest is unknown until WP-CLI can reach the database.')
+    }
+}
+if ($warn.Count) { $E.Add(''); $E.Add('# Warnings'); foreach ($w in $warn) { $E.Add("# - $w") } }
+if ($ours) { try { [IO.File]::WriteAllText($envFile, ($E -join "`n") + "`n", (New-Object Text.UTF8Encoding $false)) } catch {} }
+
+# What Claude gets every session; the details stay in .env.local, read when needed.
 $summary = "Laragon: Apache $apacheVer, PHP $($site.Version), MySQL $mysqlVer, Mailpit $mailpitVer; $url HTTP $code"
 if ($nginx) { $summary = $summary -replace '^Laragon: Apache \S*,', 'Laragon: Nginx,' }
+$C = New-Object System.Collections.Generic.List[string]
+$C.Add("$summary (detected $now). Paths, logs, DB_BACKUP_DIR and WordPress state: .env.local. After a Laragon change, refresh it: .\.claude\hooks\laragon-env.ps1 -Text")
+if ($needLoader) { $C.Add("Start every PowerShell command that runs php, wp, mysql, composer or git with Laragon's PATH: `$env:PATH = (cmd /c 'call $loader && set PATH') -match '^PATH=' -replace '^PATH=', ''") }
+if ($warn.Count) { $C.Add('Warnings:'); foreach ($w in $warn) { $C.Add("- $w") } }
+$context = $C -join "`n"
+
+if ($Text) { $context; exit 0 }
 if ($warn.Count) { $summary += "; $($warn.Count) warning(s): $($warn[0])" }
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
-[Console]::Out.Write((@{ systemMessage = $summary; hookSpecificOutput = @{ hookEventName = 'SessionStart'; additionalContext = $report } } | ConvertTo-Json -Depth 4 -Compress))
+[Console]::Out.Write((@{ systemMessage = $summary; hookSpecificOutput = @{ hookEventName = 'SessionStart'; additionalContext = $context } } | ConvertTo-Json -Depth 4 -Compress))
 exit 0

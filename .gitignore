@@ -9,6 +9,7 @@
 !/README.md
 !/CLAUDE.md
 !/.claude/
+!/docs/
 !/wp-content/
 
 # Claude Code: personal settings stay on this PC.
@@ -35,6 +36,7 @@
 *.log
 node_modules/
 .env
+.env.local
 Thumbs.db
 desktop.ini
 .DS_Store

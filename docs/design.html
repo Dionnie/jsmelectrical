@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en-AU" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSM Electrical — Revamp Design Prototype</title>
+<meta name="description" content="Design prototype for the JSM Electrical website revamp. Tokens, components and rules live in design.md.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens (source of truth: design.md) ===== */
+:root{
+  --ink:#141414; --text:#23211D; --muted:#5F5A51; --bone:#F4F1EA; --sand:#EAE4D7; --line:#DCD4C4; --white:#FFFFFF;
+  --soil:#6B4E37; --clay:#A9825F; --gum:#2E4A36; --gum-2:#223829; --gum-tint:#E3EADF; --sage:#8FA382; --sage-light:#C9D3BF;
+  --on-dark:#EDEAE3; --on-dark-muted:#A9A59C; --line-dark:#2F2E2B; --error:#A3361F; --shade:12,14,12;
+  --f-head:"Archivo",ui-sans-serif,system-ui,sans-serif; --f-body:"Inter",ui-sans-serif,system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1); --ease-out:cubic-bezier(.16,1,.3,1);
+  --wrap:1200px; --gut:clamp(16px,4vw,40px); --section:clamp(64px,8vw,112px); --hdr-h:96px; --radius:6px; --slant:clamp(28px,4vw,64px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hdr-h) + 12px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bone);color:var(--text);font:400 17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{display:block;max-width:100%}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gum);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:min(100% - 2*var(--gut),var(--wrap));margin-inline:auto}
+.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1,h2,h3{margin:0;font-family:var(--f-head);font-stretch:110%;color:var(--ink);letter-spacing:-.02em}
+h2{font-size:clamp(1.9rem,3.4vw,2.8rem);font-weight:750;line-height:1.08;text-wrap:balance}
+.kicker{display:block;margin:0 0 14px;font:700 12.5px/1.45 var(--f-head);font-stretch:112%;letter-spacing:.2em;text-transform:uppercase;color:var(--soil)}
+.kicker::before{content:"";display:inline-block;width:3px;height:14px;margin-right:10px;vertical-align:-2px;background:var(--gum);transform:skewX(-32deg)}
+.sub{margin:12px 0 0;max-width:58ch;font-size:clamp(1.02rem,1.3vw,1.12rem);color:var(--muted)}
+.section{padding-block:var(--section)}
+.sand{background:var(--sand)}
+.head{margin-bottom:40px}
+.head--split{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px 40px}
+.gap{display:inline-block;padding:3px 8px;font-size:13px;font-weight:500;color:var(--soil);border:1px dashed var(--clay);border-radius:4px;background:rgba(169,130,95,.08)}
+
+/* ===== Buttons ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border:2px solid var(--gum);border-radius:var(--radius);background:var(--gum);color:var(--white);font:600 16px/1.2 var(--f-body);text-decoration:none;cursor:pointer;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.btn:hover{background:var(--gum-2);border-color:var(--gum-2)}
+.btn--outline{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn--outline:hover{background:var(--ink);border-color:var(--ink);color:var(--white)}
+.btn--light{background:transparent;color:var(--white);border-color:rgba(255,255,255,.75)}
+.btn--light:hover{background:var(--white);border-color:var(--white);color:var(--ink)}
+.btn--lg{min-height:58px;padding:0 28px;font-size:17px}
+.btn--sm{min-height:46px;padding:0 18px;font-size:15px}
+.btn .i{width:20px;height:20px}
+.btn--ghost{background:transparent;border-color:transparent;color:var(--muted);padding:0 8px}
+.btn--ghost:hover{background:transparent;border-color:transparent;color:var(--ink)}
+
+/* ===== Header: transparent over the hero photo, solid once scrolled ===== */
+.hdr{position:fixed;inset:0 0 auto;z-index:50;color:var(--white);transition:background .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease)}
+.hdr.is-solid,.menu-open .hdr{background:rgba(244,241,234,.97);color:var(--ink);box-shadow:0 1px 0 var(--line),0 10px 30px rgba(20,20,20,.06)}
+.hdr__in{display:flex;align-items:center;gap:28px;height:var(--hdr-h)}
+.hdr__logo{flex:none;color:inherit}
+.hdr__logo svg{display:block;width:clamp(150px,14vw,186px);height:auto}
+.hdr__nav{display:flex;gap:4px;margin:0 0 0 auto;padding:0;list-style:none}
+.hdr__nav a{display:block;padding:12px 14px;border-radius:var(--radius);font-weight:500;text-decoration:none;color:inherit;transition:background .2s}
+.hdr__nav a:hover{background:rgba(255,255,255,.14)}
+.hdr.is-solid .hdr__nav a:hover{background:var(--sand)}
+.hdr__actions{display:flex;align-items:center;gap:20px}
+.hdr__phone{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;text-decoration:none;color:inherit}
+.hdr__phone small{font-size:13px;opacity:.8}
+.hdr__phone b{font-size:19px;font-weight:700;letter-spacing:.01em}
+.hdr__menu{display:none;align-items:center;gap:8px;min-height:48px;padding:0 14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.45);border-radius:var(--radius);font-weight:600;color:inherit;cursor:pointer}
+.hdr.is-solid .hdr__menu,.menu-open .hdr__menu{background:var(--white);border-color:var(--line)}
+.mnav{position:fixed;inset:var(--hdr-h) 0 0;z-index:45;display:flex;flex-direction:column;padding:16px var(--gut) 120px;background:var(--bone);overflow-y:auto;visibility:hidden;opacity:0;transition:opacity .2s,visibility 0s .2s}
+.menu-open{overflow:hidden}
+.menu-open .mnav{visibility:visible;opacity:1;transition-delay:0s}
+.mnav a{padding:16px 0;border-bottom:1px solid var(--line);font:600 21px/1.2 var(--f-head);font-stretch:108%;text-decoration:none;color:var(--ink)}
+.mnav .btn{margin-top:24px;border-bottom:2px solid var(--gum);font:600 17px/1.2 var(--f-body);color:var(--white)}
+@media (max-width:1000px){.hdr__nav{display:none}.hdr__menu{display:inline-flex}.hdr__actions{margin-left:auto}}
+@media (max-width:640px){:root{--hdr-h:76px}.hdr__logo svg{width:132px}.hdr__phone,.hdr__actions>.btn{display:none}}
+
+/* ===== Sticky action bar (phones) ===== */
+.actionbar{display:none}
+@media (max-width:760px){
+  body{padding-bottom:80px}
+  .actionbar{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--white);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(20,20,20,.07);transition:transform .3s var(--ease)}
+  .actionbar.is-hidden{transform:translateY(110%)}
+  .actionbar .btn{min-height:54px;padding:0 12px}
+}
+
+/* ===== Hero: the JSM ute, full screen ===== */
+.hero{position:relative;isolation:isolate;display:flex;align-items:flex-end;min-height:min(88svh,820px);padding:calc(var(--hdr-h) + 48px) 0 132px;color:var(--white);overflow:hidden}
+.hero__bg{position:absolute;inset:0;z-index:-2}
+.hero__bg img{width:100%;height:100%;object-fit:cover;object-position:62% 58%;animation:heroIn 2.6s var(--ease-out) both}
+@keyframes heroIn{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(90deg,rgba(var(--shade),.8) 0%,rgba(var(--shade),.55) 38%,rgba(var(--shade),.05) 68%,rgba(var(--shade),0) 100%),
+  linear-gradient(0deg,rgba(var(--shade),.6) 0%,rgba(var(--shade),0) 40%),
+  linear-gradient(180deg,rgba(var(--shade),.6) 0%,rgba(var(--shade),0) 24%)}
+.hero__copy>*{opacity:0;animation:rise .9s var(--ease-out) both;animation-delay:calc(.35s + var(--i,0)*.12s)}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.hero .kicker{color:var(--sage-light)}
+.hero .kicker::before{background:var(--sage)}
+.hero h1{max-width:18ch;font-size:clamp(2.4rem,4.8vw,4.2rem);font-weight:780;line-height:1.02;color:var(--white);text-wrap:balance}
+.hero__lead{margin:20px 0 0;max-width:44ch;font-size:clamp(1.08rem,1.45vw,1.24rem);color:rgba(255,255,255,.88)}
+.hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.checks{display:flex;flex-wrap:wrap;gap:10px 22px;margin:26px 0 0;padding:0;list-style:none;font-size:15.5px;font-weight:500}
+.checks li{display:flex;align-items:center;gap:8px}
+.checks .i{width:20px;height:20px;padding:3px;border-radius:50%;background:var(--gum);color:var(--white);stroke-width:3}
+/* Phones: the photo becomes a clear band at the top (ute and door logo in view), fading into dark behind the text */
+@media (max-width:760px){
+  .hero{min-height:auto;padding:calc(min(56vh,430px) - 36px) 0 108px;background:var(--ink)}
+  .hero__bg{bottom:auto;height:min(56vh,430px)}
+  .hero__bg img{object-position:86% 60%}
+  .hero::before{height:min(56vh,430px);bottom:auto;background:linear-gradient(180deg,rgba(var(--shade),.55) 0%,rgba(var(--shade),0) 26%,rgba(var(--shade),0) 62%,var(--ink) 100%)}
+}
+@media (max-width:520px){.hero__actions .btn{width:100%}}
+
+/* ===== Quick booking bar (overlaps the hero) ===== */
+.quick{position:relative;z-index:5;margin-top:-86px}
+.quick__card{display:grid;grid-template-columns:minmax(180px,.32fr) 1fr;gap:18px 28px;align-items:center;padding:22px 24px;background:var(--white);border-radius:16px;box-shadow:0 30px 70px rgba(20,20,20,.18)}
+.quick__title b{display:block;font:750 21px/1.2 var(--f-head);font-stretch:108%;color:var(--ink)}
+.quick__title span{display:block;margin-top:4px;font-size:14.5px;color:var(--muted)}
+.quick__opts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.qopt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:88px;padding:10px 6px;border:2px solid var(--line);border-radius:10px;background:var(--white);font-size:14.5px;font-weight:600;line-height:1.2;text-align:center;text-decoration:none;color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.qopt .i{width:26px;height:26px;color:var(--gum)}
+.qopt:hover{border-color:var(--gum);background:var(--gum-tint);transform:translateY(-2px)}
+.qopt--call{background:var(--ink);border-color:var(--ink);color:var(--white)}
+.qopt--call .i{color:var(--sage-light)}
+.qopt--call:hover{background:#000;border-color:#000}
+@media (max-width:1000px){.quick__card{grid-template-columns:1fr}.quick__opts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:420px){.quick__opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ===== Service photo cards ===== */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:box-shadow .3s var(--ease),transform .3s var(--ease)}
+.card:hover{box-shadow:0 22px 44px rgba(20,20,20,.1);transform:translateY(-3px)}
+.card__img{position:relative;aspect-ratio:4/3;overflow:hidden}
+.card__img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
+.card:hover .card__img img{transform:scale(1.06)}
+.card__img::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(var(--shade),.78) 0%,rgba(var(--shade),0) 55%)}
+.card__img h3{position:absolute;left:20px;right:20px;bottom:16px;z-index:1;font-size:23px;font-weight:750;line-height:1.15;color:var(--white)}
+.card__body{display:flex;flex-direction:column;gap:16px;flex:1;padding:18px 20px 20px}
+.card__body p{margin:0;font-size:15.5px;color:var(--muted)}
+.card__body .btn{margin-top:auto;align-self:flex-start}
+.card--call{position:relative;justify-content:flex-end;padding:28px 24px;background:var(--ink);border-color:var(--ink);color:var(--on-dark);overflow:hidden}
+.card--call .mark{position:absolute;right:-18%;top:-6%;width:130%;color:rgba(255,255,255,.05)}
+.card--call .mark svg{display:block;width:100%;height:auto}
+.card--call h3{position:relative;font-size:26px;font-weight:750;color:var(--white)}
+.card--call p{position:relative;margin:10px 0 22px;color:var(--on-dark-muted)}
+.card--call a.big{position:relative;font:750 clamp(1.7rem,2.6vw,2.1rem)/1.1 var(--f-head);font-stretch:110%;text-decoration:none;color:var(--white)}
+.card--call a.big:hover{color:var(--sage-light)}
+@media (max-width:960px){.cards{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.cards{grid-template-columns:1fr}.card--call{min-height:260px}}
+
+/* ===== How it works ===== */
+.how{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:0;padding:0;list-style:none;counter-reset:how}
+.how li{position:relative;padding:28px 24px;background:var(--white);border:1px solid var(--line);border-radius:14px;counter-increment:how}
+.how li::before{content:counter(how);display:grid;place-items:center;width:44px;height:44px;margin-bottom:18px;border-radius:50%;background:var(--gum);color:var(--white);font:750 18px/1 var(--f-head)}
+.how h3{font-size:20px;font-weight:700}
+.how p{margin:8px 0 0;font-size:15.5px;color:var(--muted)}
+@media (max-width:860px){.how{grid-template-columns:1fr}}
+
+/* ===== On the job: mosaic of JSM's own photos ===== */
+.mosaic{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,clamp(180px,20vw,270px));gap:14px}
+.mosaic figure{position:relative;margin:0;overflow:hidden;border-radius:14px;clip-path:polygon(0 0,0 0,-22% 100%,0 100%);transition:clip-path 1.3s var(--ease-out);transition-delay:calc(var(--i,0)*120ms)}
+.mosaic.is-in figure,.no-js .mosaic figure{clip-path:polygon(0 0,122% 0,100% 100%,0 100%)}
+.mosaic img{width:100%;height:100%;object-fit:cover;object-position:var(--x,50%) var(--y,50%);transform:scale(var(--z,1));transform-origin:var(--x,50%) var(--y,50%);transition:transform 1.4s var(--ease-out)}
+.mosaic figure:hover img{transform:scale(calc(var(--z,1) * 1.05))}
+.mosaic figcaption{position:absolute;left:14px;bottom:14px;padding:8px 12px;border-radius:6px;background:rgba(244,241,234,.94);font-size:14px;font-weight:600;color:var(--ink)}
+.mosaic .m1{grid-column:span 2;grid-row:span 2}
+.mosaic .m2{grid-row:span 2}
+.mosaic .m-book{display:flex;flex-direction:column;justify-content:space-between;padding:22px;background:var(--gum);color:var(--white)}
+.mosaic .m-book b{font:750 22px/1.2 var(--f-head);font-stretch:108%}
+.mosaic .m-book .btn{align-self:flex-start;white-space:nowrap;background:var(--white);border-color:var(--white);color:var(--gum)}
+.mosaic .m-book .btn:hover{background:var(--bone);border-color:var(--bone)}
+@media (max-width:860px){.mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto}.mosaic figure{aspect-ratio:1}.mosaic .m1{grid-column:span 2;aspect-ratio:16/10}.mosaic .m2{grid-row:auto}}
+
+/* ===== Why (dark, slanted top) ===== */
+.why-sec{position:relative;isolation:isolate;margin-top:calc(var(--slant) * -1);padding:calc(var(--section) + var(--slant)) 0 var(--section);background:var(--ink);color:var(--on-dark);clip-path:polygon(0 var(--slant),100% 0,100% 100%,0 100%);overflow:hidden}
+.why-sec .mark{position:absolute;right:-8%;bottom:-14%;z-index:-1;width:min(90vw,1100px);color:rgba(255,255,255,.035)}
+.why-sec .mark svg{display:block;width:100%;height:auto}
+.why-sec h2{color:var(--white)}
+.why-sec .kicker{color:var(--sage)}
+.why-sec .kicker::before{background:var(--sage)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:0 0 48px;padding:0 0 40px;list-style:none;border-bottom:1px solid var(--line-dark)}
+.stats b{display:block;font:780 clamp(2.4rem,5vw,3.8rem)/1 var(--f-head);font-stretch:112%;color:var(--white)}
+.stats span{display:block;margin-top:8px;font-size:15px;color:var(--on-dark-muted)}
+.why{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.why .i{width:30px;height:30px;color:var(--sage)}
+.why h3{margin:14px 0 6px;font-size:19px;font-weight:700;color:var(--white)}
+.why p{margin:0;font-size:15.5px;color:var(--on-dark-muted)}
+@media (max-width:900px){.why{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.why,.stats{grid-template-columns:1fr}}
+
+/* ===== We come to you: full-width ute panorama ===== */
+.come__areas{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 0;padding:0;list-style:none}
+.come__areas li{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--white);border:1px solid var(--line);border-radius:999px;font-size:15px;font-weight:600;color:var(--ink)}
+.come__areas .i{width:18px;height:18px;color:var(--gum)}
+.come__note{margin:16px 0 0;font-size:15.5px;color:var(--muted)}
+.come__note a{font-weight:600;color:var(--gum)}
+.panorama{margin-top:40px;background:#E3E8E4}
+#scene{display:block;width:100%;height:clamp(280px,34vw,500px)}
+#scene .sign-t{font:700 18px var(--f-head);font-stretch:112%;letter-spacing:.08em;fill:#fff}
+#scene .door-phone{font:600 11px var(--f-head);font-stretch:112%;letter-spacing:.24em;fill:var(--ink)}
+#scene .puff{fill:#C8B496;transform-box:fill-box;transform-origin:center;animation:puff 1s ease-out infinite}
+#scene .puff.p2{animation-delay:.33s}
+#scene .puff.p3{animation-delay:.66s}
+@keyframes puff{0%{opacity:.75;transform:scale(.4)}100%{opacity:0;transform:scale(1.7) translateX(-26px)}}
+
+/* ===== Reviews (placeholder) ===== */
+.reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.review{margin:0;padding:24px;background:var(--bone);border:1px dashed #CBBFA9;border-radius:14px}
+.review .stars{display:flex;gap:3px;margin-bottom:12px;color:#C9BEA8}
+.review .stars .i{width:18px;height:18px;fill:currentColor;stroke:none}
+.review p{margin:0 0 14px;color:var(--muted)}
+.review footer{font-size:14px;color:var(--muted)}
+@media (max-width:860px){.reviews{grid-template-columns:1fr}}
+
+/* ===== Booking (over a dark photo) ===== */
+.book-sec{position:relative;isolation:isolate;color:var(--on-dark)}
+.book-sec::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(var(--shade),.92) 0%,rgba(var(--shade),.8) 50%,rgba(var(--shade),.7) 100%),url("assets/photo-ute-tools.jpg") 70% 40%/cover}
+.book{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:clamp(28px,5vw,64px);align-items:start}
+.book h2{color:var(--white)}
+.book .kicker{color:var(--sage-light)}
+.book .kicker::before{background:var(--sage)}
+.book .sub{color:rgba(255,255,255,.8)}
+.call-card{margin-top:28px;padding:22px 24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px}
+.call-card small{display:block;font-size:14px;color:var(--on-dark-muted)}
+.call-card a{display:inline-block;margin-top:4px;font:750 clamp(1.6rem,2.6vw,2.1rem)/1.2 var(--f-head);font-stretch:110%;text-decoration:none;color:var(--white)}
+.contact-list{margin:20px 0 0;padding:0;list-style:none}
+.contact-list li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:15.5px}
+.contact-list .i{color:var(--sage-light);margin-top:2px}
+.contact-list a{font-weight:600;color:var(--white)}
+.book-sec .gap{color:var(--sage-light);border-color:var(--sage);background:transparent}
+.form{padding:clamp(22px,3.4vw,40px);background:var(--white);border-radius:16px;box-shadow:0 30px 70px rgba(0,0,0,.3);color:var(--text)}
+.progress{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--muted)}
+.progress__bar{height:6px;margin-bottom:26px;border-radius:3px;background:var(--sand);overflow:hidden}
+.progress__bar i{display:block;height:100%;width:33.3%;border-radius:3px;background:var(--gum);transition:width .35s var(--ease)}
+.step{margin:0;padding:0;border:0;min-width:0}
+.step[hidden]{display:none}
+.step legend{margin-bottom:6px;padding:0;font:700 clamp(1.35rem,2.2vw,1.65rem)/1.2 var(--f-head);font-stretch:108%;letter-spacing:-.01em;color:var(--ink)}
+.step .hint{margin:0 0 20px;font-size:15px;color:var(--muted)}
+.step .hint.is-bad{color:var(--error);font-weight:500}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice label{display:flex;align-items:center;gap:12px;min-height:60px;padding:12px 16px;border:2px solid var(--line);border-radius:var(--radius);background:var(--white);font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.choice label .i{color:var(--gum)}
+.choice label:hover{border-color:var(--gum)}
+.choice input:checked+label{border-color:var(--gum);background:var(--gum-tint)}
+.choice input:focus-visible+label{outline:3px solid var(--gum);outline-offset:2px}
+.times label{flex-direction:column;align-items:flex-start;justify-content:center;gap:2px}
+.times label small{font-weight:400;font-size:14px;color:var(--muted)}
+.field{margin-bottom:16px}
+.field label{display:block;margin-bottom:6px;font-weight:600;color:var(--ink)}
+.field label small{font-weight:400;color:var(--muted)}
+.field input,.field textarea{display:block;width:100%;min-height:54px;padding:12px 14px;background:var(--white);border:2px solid var(--line);border-radius:var(--radius);font-size:17px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.field textarea{min-height:110px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--gum);box-shadow:0 0 0 3px rgba(46,74,54,.15)}
+.field .err{display:none;margin-top:6px;font-size:14.5px;font-weight:500;color:var(--error)}
+.field.is-bad input{border-color:var(--error)}
+.field.is-bad .err{display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.picked{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 20px;padding:12px 14px;border-radius:var(--radius);background:var(--gum-tint);font-size:15px}
+.picked button{padding:6px 0;background:none;border:0;font-weight:600;text-decoration:underline;color:var(--gum);cursor:pointer}
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px}
+.nav-row .btn:last-child{margin-left:auto}
+.privacy{margin:16px 0 0;font-size:13.5px;color:var(--muted)}
+.done{text-align:center;padding:12px 0;outline:none}
+.done[hidden]{display:none}
+.done .tick{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:var(--gum);color:var(--white)}
+.done .tick .i{width:32px;height:32px;stroke-width:2.6}
+.done h3{font-size:clamp(1.4rem,2.4vw,1.8rem);font-weight:700}
+.done p{margin:10px auto 0;max-width:40ch;color:var(--muted)}
+.done a{color:var(--ink)}
+@media (max-width:960px){.book{grid-template-columns:1fr}.book>div:first-child{order:2}}
+@media (max-width:520px){.choices,.two{grid-template-columns:1fr}}
+
+/* ===== Footer ===== */
+.foot{padding:clamp(48px,6vw,72px) 0 28px;background:var(--ink);color:var(--on-dark-muted)}
+.foot__top{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:40px}
+.foot a.foot__logo{display:inline-block;color:var(--white)}
+.foot__logo svg{display:block;width:clamp(200px,20vw,260px);height:auto}
+.foot__brand p{margin:20px 0 14px;max-width:34ch;font-size:15px}
+.foot__ids{display:flex;flex-wrap:wrap;gap:8px}
+.foot .gap{color:var(--sage-light);border-color:var(--sage);background:transparent}
+.foot h3{margin-bottom:14px;font-size:15px;font-weight:700;letter-spacing:.02em;color:var(--white)}
+.foot ul{display:grid;gap:10px;margin:0;padding:0;list-style:none;font-size:15px}
+.foot a{text-decoration:none;color:var(--on-dark-muted);transition:color .2s}
+.foot a:hover{color:var(--white)}
+.foot a.foot__phone{font-size:19px;font-weight:700;color:var(--white)}
+.foot__bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;margin-top:44px;padding-top:22px;border-top:1px solid var(--line-dark);font-size:14px}
+.foot__bar nav{display:flex;gap:20px}
+@media (max-width:900px){.foot__top{grid-template-columns:1fr 1fr}.foot__brand{grid-column:1/-1}}
+@media (max-width:520px){.foot__top{grid-template-columns:1fr}}
+
+/* ===== Reveal (subtle, once) ===== */
+[data-reveal]{opacity:0;translate:0 18px;transition:opacity .8s var(--ease-out),translate .8s var(--ease-out);transition-delay:calc(var(--i,0)*80ms)}
+[data-reveal].is-in{opacity:1;translate:0 0}
+.no-js [data-reveal]{opacity:1;translate:none}
+
+.proto{position:fixed;left:16px;bottom:16px;z-index:40;padding:8px 11px;background:var(--white);border:1px solid var(--line);border-radius:4px;font:600 12px/1 var(--f-body);text-decoration:none;color:var(--muted)}
+@media (max-width:760px){.proto{display:none}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  [data-reveal]{opacity:1;translate:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo-full" viewBox="0 0 189 80"><path fill="currentColor" d="M13.79 -0.33Q14.02 -0.5 16.22 -0.47L26.35 -0.33L26.71 1.08Q27.07 2.5 27 3.58L27 3.58Q26.93 4.67 26.66 5.92L26.66 5.92Q26.38 7.17 25.81 8.17L25.81 8.17Q25.24 9.17 23.62 10.25L23.62 10.25Q22 11.34 21.08 11.43L21.08 11.43Q20.17 11.51 19.68 11.34L19.68 11.34Q19.19 11.17 18.46 10.17L18.46 10.17Q17.74 9.17 16.79 7.18L14.55 2.49Q13.6 0.5 13.58 0.17L13.55 -0.17ZM33 -0.5L34.08 -0.4Q35.17 -0.29 37.15 0.66L37.25 0.71Q39.23 1.67 40.63 3.37L40.85 3.63Q42.25 5.33 42.51 6.58L42.51 6.58Q42.76 7.83 42.88 10.03L43.23 16.97Q43.35 19.17 43.32 21.37L43.22 28.97Q43.19 31.17 42.98 33.36L42.49 38.48Q42.28 40.67 41.47 42.71L41.14 43.54Q40.33 45.59 39.78 46.46L39.78 46.46Q39.23 47.33 37.64 48.86L36.75 49.71Q35.17 51.23 33.33 52.29L33.33 52.29Q31.5 53.34 29.43 54.09L28.07 54.59Q26 55.34 23.83 55.71L23 55.85Q20.83 56.22 18.63 56.25L17.37 56.27Q15.17 56.29 13 55.94L11.17 55.64Q9 55.28 6.91 54.6L5.08 54.01Q2.98 53.33 2.19 52.75L1.4 52.17L1.51 51.5Q1.62 50.83 2.71 48.92L4.57 45.67Q5.67 43.76 6.17 43.21L6.17 43.21Q6.67 42.67 7 42.65L7 42.65Q7.33 42.63 9 43.47L9 43.47Q10.67 44.31 12.71 44.74L12.71 44.74Q14.76 45.17 16.96 45.16L18.63 45.15Q20.83 45.14 22.92 44.74L22.92 44.74Q25 44.34 26.01 43.84L26.01 43.84Q27.02 43.33 28.63 41.83L28.81 41.67Q30.41 40.17 30.87 39.28L30.87 39.28Q31.33 38.38 31.83 36.44L31.83 36.44Q32.32 34.5 32.32 32.3L32.3 2.53Q32.3 0.33 32.65 -0.08ZM69.5 0.7Q71 0.5 73.2 0.53L77.3 0.58Q79.5 0.61 81.66 1.02L82.87 1.25Q85.03 1.67 87.11 2.38L91.68 3.95Q93.76 4.67 95.63 5.71L95.63 5.71Q97.5 6.75 97.74 7.12L97.74 7.12Q97.98 7.5 97.93 7.83L97.93 7.83Q97.89 8.17 96.44 9.82L95.78 10.57Q94.33 12.22 92.74 13.69L91.15 15.17L88.91 13.89Q87 12.8 85.42 12.27L85.42 12.27Q83.83 11.75 81.65 11.5L77.35 11.02Q75.17 10.78 72.99 11.11L72.01 11.26Q69.83 11.59 68.69 12.13L68.69 12.13Q67.55 12.67 66.61 13.51L66.61 13.51Q65.67 14.36 65.12 15.35L65.12 15.35Q64.57 16.33 64.62 17.35L64.62 17.35Q64.67 18.36 65.43 19.26L65.43 19.26Q66.19 20.17 67.09 20.69L67.09 20.69Q68 21.21 70.16 21.65L80.84 23.84Q83 24.28 85.08 24.52L85.08 24.52Q87.17 24.75 89.3 25.29L92.37 26.05Q94.5 26.58 96.39 27.63L96.39 27.63Q98.27 28.67 99.76 30.25L99.76 30.25Q101.25 31.83 101.84 33.33L101.84 33.33Q102.44 34.83 102.6 37.03L102.64 37.47Q102.8 39.67 102.56 41.67L102.56 41.67Q102.32 43.67 101.81 44.75L101.81 44.75Q101.29 45.83 100.23 47.33L100.23 47.33Q99.17 48.82 97.49 50.25L96.84 50.81Q95.17 52.24 93.18 53.18L90.65 54.39Q88.67 55.33 86.53 55.87L86.47 55.89Q84.33 56.43 82.14 56.62L80.19 56.8Q78 56.99 75.81 56.81L70.53 56.39Q68.33 56.21 66.23 55.57L64.44 55.02Q62.33 54.37 60.37 53.39L59.97 53.19Q58 52.2 56.2 50.94L55.47 50.43Q53.67 49.17 52.17 47.7L52.17 47.7Q50.67 46.24 50.52 45.87L50.52 45.87Q50.37 45.5 50.43 45.05L50.43 45.05Q50.5 44.6 52.12 43.11L57 38.66L65.75 43.3Q67.7 44.33 69.76 45.09L70.93 45.52Q73 46.28 74.5 46.44L74.5 46.44Q76 46.61 78.2 46.54L80.3 46.48Q82.5 46.42 84.25 45.88L84.25 45.88Q86 45.34 87.58 44.03L87.58 44.03Q89.17 42.73 89.67 41.81L89.67 41.81Q90.17 40.9 90.19 39.37L90.19 39.37Q90.21 37.83 89.69 36.89L89.69 36.89Q89.17 35.95 88.33 35.35L88.33 35.35Q87.5 34.74 85.67 34.21L85.67 34.21Q83.83 33.69 81.65 33.4L68.51 31.69Q66.33 31.41 64.47 30.87L64.47 30.87Q62.61 30.33 60.71 29.33L60.71 29.33Q58.8 28.33 57.65 27.35L57.65 27.35Q56.5 26.36 55.2 24.59L54.97 24.28Q53.67 22.51 53.13 21.09L53.13 21.09Q52.6 19.67 52.56 17.47L52.55 16.87Q52.5 14.67 53.09 12.68L53.09 12.68Q53.67 10.7 54.63 9.27L54.63 9.27Q55.59 7.83 57.18 6.3L57.25 6.23Q58.83 4.7 60.58 3.7L60.58 3.7Q62.33 2.7 64.43 2.03L65.9 1.56Q68 0.89 69.5 0.7ZM111.13 2.33L119.63 2.23Q121.83 2.2 123.08 2.43L123.08 2.43Q124.33 2.65 125.72 4.37L135.95 17.04Q137.33 18.75 138.35 20.7L138.45 20.88Q139.47 22.83 139.84 24.83L139.84 24.83Q140.2 26.83 139.8 29L139.8 29Q139.4 31.17 138.78 32.41L138.78 32.41Q138.17 33.66 137.5 34.14L136.83 34.62L123.26 17.83L122.67 17.91L122.6 51.47Q122.59 53.67 122.3 54.08L122.3 54.08Q122 54.5 119.8 54.5L114.2 54.5Q112 54.5 111.33 54.25L110.66 54L110.64 5.53Q110.64 3.33 110.88 2.83ZM172.79 2.54Q174.09 2.33 176.29 2.31L181.3 2.24Q183.5 2.22 183.74 2.36L183.98 2.5L183.98 2.75Q183.99 3 182.64 4.74L157.57 36.93Q156.22 38.67 154.62 40.18L153.96 40.82Q152.37 42.33 151.18 42.92L151.18 42.92Q150 43.5 148.5 43.75L148.5 43.75Q147 43.99 145.42 43.69L145.42 43.69Q143.83 43.39 142.3 42.78L140.78 42.17L140.72 41.45Q140.67 40.73 142.09 39.05L143.91 36.91Q145.33 35.23 146.68 33.49L165.42 9.4Q166.78 7.67 168.3 6.08L169.98 4.33Q171.5 2.74 172.79 2.54ZM183.66 11.67L183.84 12Q184.01 12.33 184.01 14.53L184.06 51.47Q184.06 53.67 183.95 53.92L183.95 53.92Q183.83 54.17 183.33 54.3L183.33 54.3Q182.83 54.44 180.83 53.91L180.83 53.91Q178.83 53.39 177.83 52.85L177.83 52.85Q176.83 52.31 175.73 51.24L175.73 51.24Q174.62 50.17 173.68 48.33L173.68 48.33Q172.74 46.5 172.54 44.67L172.54 44.67Q172.34 42.83 172.34 40.63L172.34 30.2Q172.34 28 172.51 26.42L172.51 26.42Q172.69 24.83 174.05 23.1L180.48 14.9Q181.83 13.17 182.33 12.58L182.33 12.58Q182.83 11.99 183.25 11.83ZM0 70.65H2V80H0ZM0 70.65H10V72H0ZM0 74.65H8.3V76H0ZM0 78.65H10V80H0ZM20.5 70.65H22.5V80H20.5ZM20.5 78.65H31V80H20.5ZM41.5 70.65H43.5V80H41.5ZM41.5 70.65H51.6V72H41.5ZM41.5 74.65H49.6V76H41.5ZM41.5 78.65H51.6V80H41.5ZM62 70.65H64V80H62ZM62 70.65H72.3V72H62ZM62 78.65H72.3V80H62ZM82.4 70.65H93V72H82.4ZM86.5 70.65H88.5V80H86.5ZM103 70.65H105V80H103ZM103 70.65H113.3V72H103ZM111.3 70.65H113.3V77H111.3ZM103 75.5H113.3V77H103ZM110.4 77H112.6L113.6 80H111.2ZM124.3 70.65H126.3V80H124.3ZM136.4 70.65H138.4V80H136.4ZM136.4 70.65H146.6V72H136.4ZM136.4 78.65H146.6V80H136.4ZM157.4 70.65H159.4V80H157.4ZM165.6 70.65H167.6V80H165.6ZM157.4 70.65H167.6V72.3H157.4ZM157.4 75.4H167.6V77H157.4ZM178.4 70.65H180.4V80H178.4ZM178.4 78.65H188.6V80H178.4Z"/></symbol>
+  <symbol id="logo-jsm" viewBox="0 0 189 64"><path fill="currentColor" d="M13.79 -0.33Q14.02 -0.5 16.22 -0.47L26.35 -0.33L26.71 1.08Q27.07 2.5 27 3.58L27 3.58Q26.93 4.67 26.66 5.92L26.66 5.92Q26.38 7.17 25.81 8.17L25.81 8.17Q25.24 9.17 23.62 10.25L23.62 10.25Q22 11.34 21.08 11.43L21.08 11.43Q20.17 11.51 19.68 11.34L19.68 11.34Q19.19 11.17 18.46 10.17L18.46 10.17Q17.74 9.17 16.79 7.18L14.55 2.49Q13.6 0.5 13.58 0.17L13.55 -0.17ZM33 -0.5L34.08 -0.4Q35.17 -0.29 37.15 0.66L37.25 0.71Q39.23 1.67 40.63 3.37L40.85 3.63Q42.25 5.33 42.51 6.58L42.51 6.58Q42.76 7.83 42.88 10.03L43.23 16.97Q43.35 19.17 43.32 21.37L43.22 28.97Q43.19 31.17 42.98 33.36L42.49 38.48Q42.28 40.67 41.47 42.71L41.14 43.54Q40.33 45.59 39.78 46.46L39.78 46.46Q39.23 47.33 37.64 48.86L36.75 49.71Q35.17 51.23 33.33 52.29L33.33 52.29Q31.5 53.34 29.43 54.09L28.07 54.59Q26 55.34 23.83 55.71L23 55.85Q20.83 56.22 18.63 56.25L17.37 56.27Q15.17 56.29 13 55.94L11.17 55.64Q9 55.28 6.91 54.6L5.08 54.01Q2.98 53.33 2.19 52.75L1.4 52.17L1.51 51.5Q1.62 50.83 2.71 48.92L4.57 45.67Q5.67 43.76 6.17 43.21L6.17 43.21Q6.67 42.67 7 42.65L7 42.65Q7.33 42.63 9 43.47L9 43.47Q10.67 44.31 12.71 44.74L12.71 44.74Q14.76 45.17 16.96 45.16L18.63 45.15Q20.83 45.14 22.92 44.74L22.92 44.74Q25 44.34 26.01 43.84L26.01 43.84Q27.02 43.33 28.63 41.83L28.81 41.67Q30.41 40.17 30.87 39.28L30.87 39.28Q31.33 38.38 31.83 36.44L31.83 36.44Q32.32 34.5 32.32 32.3L32.3 2.53Q32.3 0.33 32.65 -0.08ZM69.5 0.7Q71 0.5 73.2 0.53L77.3 0.58Q79.5 0.61 81.66 1.02L82.87 1.25Q85.03 1.67 87.11 2.38L91.68 3.95Q93.76 4.67 95.63 5.71L95.63 5.71Q97.5 6.75 97.74 7.12L97.74 7.12Q97.98 7.5 97.93 7.83L97.93 7.83Q97.89 8.17 96.44 9.82L95.78 10.57Q94.33 12.22 92.74 13.69L91.15 15.17L88.91 13.89Q87 12.8 85.42 12.27L85.42 12.27Q83.83 11.75 81.65 11.5L77.35 11.02Q75.17 10.78 72.99 11.11L72.01 11.26Q69.83 11.59 68.69 12.13L68.69 12.13Q67.55 12.67 66.61 13.51L66.61 13.51Q65.67 14.36 65.12 15.35L65.12 15.35Q64.57 16.33 64.62 17.35L64.62 17.35Q64.67 18.36 65.43 19.26L65.43 19.26Q66.19 20.17 67.09 20.69L67.09 20.69Q68 21.21 70.16 21.65L80.84 23.84Q83 24.28 85.08 24.52L85.08 24.52Q87.17 24.75 89.3 25.29L92.37 26.05Q94.5 26.58 96.39 27.63L96.39 27.63Q98.27 28.67 99.76 30.25L99.76 30.25Q101.25 31.83 101.84 33.33L101.84 33.33Q102.44 34.83 102.6 37.03L102.64 37.47Q102.8 39.67 102.56 41.67L102.56 41.67Q102.32 43.67 101.81 44.75L101.81 44.75Q101.29 45.83 100.23 47.33L100.23 47.33Q99.17 48.82 97.49 50.25L96.84 50.81Q95.17 52.24 93.18 53.18L90.65 54.39Q88.67 55.33 86.53 55.87L86.47 55.89Q84.33 56.43 82.14 56.62L80.19 56.8Q78 56.99 75.81 56.81L70.53 56.39Q68.33 56.21 66.23 55.57L64.44 55.02Q62.33 54.37 60.37 53.39L59.97 53.19Q58 52.2 56.2 50.94L55.47 50.43Q53.67 49.17 52.17 47.7L52.17 47.7Q50.67 46.24 50.52 45.87L50.52 45.87Q50.37 45.5 50.43 45.05L50.43 45.05Q50.5 44.6 52.12 43.11L57 38.66L65.75 43.3Q67.7 44.33 69.76 45.09L70.93 45.52Q73 46.28 74.5 46.44L74.5 46.44Q76 46.61 78.2 46.54L80.3 46.48Q82.5 46.42 84.25 45.88L84.25 45.88Q86 45.34 87.58 44.03L87.58 44.03Q89.17 42.73 89.67 41.81L89.67 41.81Q90.17 40.9 90.19 39.37L90.19 39.37Q90.21 37.83 89.69 36.89L89.69 36.89Q89.17 35.95 88.33 35.35L88.33 35.35Q87.5 34.74 85.67 34.21L85.67 34.21Q83.83 33.69 81.65 33.4L68.51 31.69Q66.33 31.41 64.47 30.87L64.47 30.87Q62.61 30.33 60.71 29.33L60.71 29.33Q58.8 28.33 57.65 27.35L57.65 27.35Q56.5 26.36 55.2 24.59L54.97 24.28Q53.67 22.51 53.13 21.09L53.13 21.09Q52.6 19.67 52.56 17.47L52.55 16.87Q52.5 14.67 53.09 12.68L53.09 12.68Q53.67 10.7 54.63 9.27L54.63 9.27Q55.59 7.83 57.18 6.3L57.25 6.23Q58.83 4.7 60.58 3.7L60.58 3.7Q62.33 2.7 64.43 2.03L65.9 1.56Q68 0.89 69.5 0.7ZM111.13 2.33L119.63 2.23Q121.83 2.2 123.08 2.43L123.08 2.43Q124.33 2.65 125.72 4.37L135.95 17.04Q137.33 18.75 138.35 20.7L138.45 20.88Q139.47 22.83 139.84 24.83L139.84 24.83Q140.2 26.83 139.8 29L139.8 29Q139.4 31.17 138.78 32.41L138.78 32.41Q138.17 33.66 137.5 34.14L136.83 34.62L123.26 17.83L122.67 17.91L122.6 51.47Q122.59 53.67 122.3 54.08L122.3 54.08Q122 54.5 119.8 54.5L114.2 54.5Q112 54.5 111.33 54.25L110.66 54L110.64 5.53Q110.64 3.33 110.88 2.83ZM172.79 2.54Q174.09 2.33 176.29 2.31L181.3 2.24Q183.5 2.22 183.74 2.36L183.98 2.5L183.98 2.75Q183.99 3 182.64 4.74L157.57 36.93Q156.22 38.67 154.62 40.18L153.96 40.82Q152.37 42.33 151.18 42.92L151.18 42.92Q150 43.5 148.5 43.75L148.5 43.75Q147 43.99 145.42 43.69L145.42 43.69Q143.83 43.39 142.3 42.78L140.78 42.17L140.72 41.45Q140.67 40.73 142.09 39.05L143.91 36.91Q145.33 35.23 146.68 33.49L165.42 9.4Q166.78 7.67 168.3 6.08L169.98 4.33Q171.5 2.74 172.79 2.54ZM183.66 11.67L183.84 12Q184.01 12.33 184.01 14.53L184.06 51.47Q184.06 53.67 183.95 53.92L183.95 53.92Q183.83 54.17 183.33 54.3L183.33 54.3Q182.83 54.44 180.83 53.91L180.83 53.91Q178.83 53.39 177.83 52.85L177.83 52.85Q176.83 52.31 175.73 51.24L175.73 51.24Q174.62 50.17 173.68 48.33L173.68 48.33Q172.74 46.5 172.54 44.67L172.54 44.67Q172.34 42.83 172.34 40.63L172.34 30.2Q172.34 28 172.51 26.42L172.51 26.42Q172.69 24.83 174.05 23.1L180.48 14.9Q181.83 13.17 182.33 12.58L182.33 12.58Q182.83 11.99 183.25 11.83Z"/></symbol>
+  <symbol id="gum-tree" viewBox="0 0 120 160"><path d="M60 160V100L46 80M61 116L76 94M60 134L45 120" fill="none" stroke="#8D8273" stroke-width="5" stroke-linecap="round"/><g fill="currentColor"><ellipse cx="40" cy="74" rx="28" ry="20"/><ellipse cx="76" cy="60" rx="32" ry="24"/><ellipse cx="56" cy="38" rx="27" ry="23"/><ellipse cx="90" cy="88" rx="20" ry="14"/><ellipse cx="26" cy="98" rx="16" ry="11"/></g></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7M5 10v10h14V10M10 20v-6h4v6"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5l8-2v18M12 7l8 2v12M3 21h18M7 8h2M7 12h2M7 16h2M15 12h2M15 16h2"/></symbol>
+  <symbol id="i-factory" viewBox="0 0 24 24"><path d="M3 21V10l6 4V10l6 4V6l6-2v17H3zM7 17h2M12 17h2M17 17h2"/></symbol>
+  <symbol id="i-reno" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></symbol>
+  <symbol id="i-cable" viewBox="0 0 24 24"><path d="M2 5h5v4a3 3 0 0 0 3 3h4a3 3 0 0 1 3 3v4h5M7 3v4M17 17v4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 6.5 7 .9-5.1 4.8 1.3 7L12 17.8 5.8 21.2l1.3-7L2 9.4l7-.9z"/></symbol>
+</svg>
+
+<header class="hdr" id="hdr">
+  <div class="wrap hdr__in">
+    <a class="hdr__logo" href="#top" aria-label="JSM Electrical, home"><svg viewBox="0 0 189 80" aria-hidden="true"><use href="#logo-full"/></svg></a>
+    <ul class="hdr__nav">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#areas">Areas</a></li>
+      <li><a href="#book">Contact</a></li>
+    </ul>
+    <div class="hdr__actions">
+      <a class="hdr__phone" href="tel:0429400287"><small>Call us</small><b>0429 400 287</b></a>
+      <a class="btn" href="#book">Book an electrician</a>
+      <button class="hdr__menu" type="button" aria-expanded="false" aria-controls="mnav"><svg class="i"><use href="#i-menu"/></svg><span>Menu</span></button>
+    </div>
+  </div>
+</header>
+
+<nav class="mnav" id="mnav" aria-label="Menu">
+  <a href="#services">Services</a>
+  <a href="#how">How it works</a>
+  <a href="#areas">Areas we cover</a>
+  <a href="#book">Contact</a>
+  <a class="btn btn--lg" href="#book">Book an electrician</a>
+</nav>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__bg"><img src="assets/photo-ute-viaduct.jpg" alt="The JSM Electrical ute on a rural job site, with gum trees and a viaduct in the valley behind" fetchpriority="high"></div>
+  <div class="wrap">
+    <div class="hero__copy">
+      <p class="kicker" style="--i:0">Geelong · Bellarine · Surf Coast</p>
+      <h1 id="hero-title" style="--i:1">Reliable electricians for homes, businesses and beyond.</h1>
+      <p class="hero__lead" style="--i:2">Repairs, maintenance and new installations by a local, fully equipped team. Your first consultation is free.</p>
+      <div class="hero__actions" style="--i:3">
+        <a class="btn btn--lg" href="#book">Book an electrician <svg class="i"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn--lg btn--light" href="tel:0429400287"><svg class="i"><use href="#i-phone"/></svg>Call 0429 400 287</a>
+      </div>
+      <ul class="checks" style="--i:4">
+        <li><svg class="i"><use href="#i-check"/></svg>Free consultation</li>
+        <li><svg class="i"><use href="#i-check"/></svg>Homes, business and industrial</li>
+        <li><svg class="i"><use href="#i-check"/></svg>Local since 2023</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUICK BOOKING BAR ===================== -->
+<div class="quick" data-reveal>
+  <div class="wrap">
+    <div class="quick__card">
+      <div class="quick__title"><b>Book in about a minute</b><span>Choose what you need help with.</span></div>
+      <div class="quick__opts">
+        <button class="qopt" type="button" data-book="homes"><svg class="i"><use href="#i-home"/></svg>Homes</button>
+        <button class="qopt" type="button" data-book="business"><svg class="i"><use href="#i-building"/></svg>Business</button>
+        <button class="qopt" type="button" data-book="industrial"><svg class="i"><use href="#i-factory"/></svg>Industrial</button>
+        <button class="qopt" type="button" data-book="renovation"><svg class="i"><use href="#i-reno"/></svg>Renovation</button>
+        <button class="qopt" type="button" data-book="underground"><svg class="i"><use href="#i-cable"/></svg>Underground</button>
+        <a class="qopt qopt--call" href="tel:0429400287"><svg class="i"><use href="#i-phone"/></svg>Not sure?<br>Call us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SERVICES ===================== -->
+<section class="section" id="services" aria-labelledby="svc-title">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Our services</p>
+      <h2 id="svc-title">What we can help with</h2>
+      <p class="sub">From a tripped breaker at home to the power supply for a warehouse. Pick a service to book it.</p>
+    </div>
+    <div class="cards">
+      <article class="card" data-reveal style="--i:0">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=70" alt="" loading="lazy"><h3>Homes</h3></div>
+        <div class="card__body"><p>Faulty wiring, tripped breakers, upgrades and new home wiring.</p><a class="btn btn--sm" href="#book" data-book="homes">Book this <svg class="i"><use href="#i-arrow"/></svg></a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=70" alt="" loading="lazy"><h3>Business &amp; commercial</h3></div>
+        <div class="card__body"><p>Power, lighting, CCTV, heating and cooling, and maintenance for your premises.</p><a class="btn btn--sm" href="#book" data-book="business">Book this <svg class="i"><use href="#i-arrow"/></svg></a></div>
+      </article>
+      <article class="card" data-reveal style="--i:2">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=900&q=70" alt="" loading="lazy"><h3>Industrial</h3></div>
+        <div class="card__body"><p>Plants, warehouses, heavy equipment, generators and industrial lighting.</p><a class="btn btn--sm" href="#book" data-book="industrial">Book this <svg class="i"><use href="#i-arrow"/></svg></a></div>
+      </article>
+      <article class="card" data-reveal style="--i:0">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=70" alt="" loading="lazy"><h3>Renovations</h3></div>
+        <div class="card__body"><p>Planning, old wiring out, new circuits in, and a final safety inspection.</p><a class="btn btn--sm" href="#book" data-book="renovation">Book this <svg class="i"><use href="#i-arrow"/></svg></a></div>
+      </article>
+      <article class="card" data-reveal style="--i:1">
+        <div class="card__img"><img src="https://images.unsplash.com/photo-1517089596392-fb9a9033e05b?auto=format&fit=crop&w=900&q=70" alt="" loading="lazy"><h3>Underground</h3></div>
+        <div class="card__body"><p>Buried cabling, fault finding and repair, including remote sites.</p><a class="btn btn--sm" href="#book" data-book="underground">Book this <svg class="i"><use href="#i-arrow"/></svg></a></div>
+      </article>
+      <article class="card card--call" data-reveal style="--i:2">
+        <div class="mark" aria-hidden="true"><svg viewBox="0 0 189 64"><use href="#logo-jsm"/></svg></div>
+        <h3>Not sure what you need?</h3>
+        <p>Tell us what's happening and we'll point you in the right direction.</p>
+        <a class="big" href="tel:0429400287">0429 400 287</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="section sand" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">How it works</p>
+      <h2 id="how-title">Booking takes about a minute</h2>
+      <p class="sub">Three simple steps, and nothing to pay to get started.</p>
+    </div>
+    <ol class="how">
+      <li data-reveal style="--i:0"><h3>Tell us what you need</h3><p>Book online, or call us on 0429 400 287.</p></li>
+      <li data-reveal style="--i:1"><h3>We call you back</h3><p>At the time of day that suits you: morning, afternoon or evening.</p></li>
+      <li data-reveal style="--i:2"><h3>Free consultation</h3><p>We talk through the job, then get it done safely and on time.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== ON THE JOB ===================== -->
+<section class="section" aria-labelledby="work-title">
+  <div class="wrap">
+    <div class="head head--split">
+      <div><p class="kicker">On the job</p><h2 id="work-title">Fully equipped, ready for any site</h2></div>
+      <a class="btn btn--outline" href="#book">Book an electrician</a>
+    </div>
+    <div class="mosaic" data-mosaic>
+      <figure class="m1" style="--i:0"><img src="assets/photo-ute-tools.jpg" alt="The JSM ute on a rural property with its canopy open and tools organised on the shelves" loading="lazy" style="--x:60%;--y:50%"><figcaption>Every tool for the job, on board</figcaption></figure>
+      <figure class="m2" style="--i:1"><img src="assets/photo-ute-viaduct.jpg" alt="The JSM Electrical logo and phone number on the ute door" loading="lazy" style="--x:85%;--y:69%;--z:2.3"><figcaption>Look for the JSM ute</figcaption></figure>
+      <figure class="m3" style="--i:2"><img src="assets/photo-ute-tools.jpg" alt="Power tools and cases on the ute's shelves" loading="lazy" style="--x:80%;--y:45%;--z:2.1"><figcaption>Organised and ready</figcaption></figure>
+      <figure class="m-book" style="--i:3"><b>Need an electrician?</b><a class="btn btn--sm" href="#book">Book now <svg class="i"><use href="#i-arrow"/></svg></a></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHY (dark) ===================== -->
+<section class="why-sec" aria-labelledby="why-title">
+  <div class="mark" aria-hidden="true"><svg viewBox="0 0 189 64"><use href="#logo-jsm"/></svg></div>
+  <div class="wrap">
+    <div class="head"><p class="kicker">Why JSM</p><h2 id="why-title">Why people choose us</h2></div>
+    <ul class="stats">
+      <li data-reveal style="--i:0"><b>2023</b><span>Founded in Geelong</span></li>
+      <li data-reveal style="--i:1"><b>5</b><span>Specialist services, one crew</span></li>
+      <li data-reveal style="--i:2"><b>3</b><span>Home regions, plus regional projects</span></li>
+    </ul>
+    <div class="why">
+      <div data-reveal style="--i:0"><svg class="i"><use href="#i-users"/></svg><h3>Qualified team</h3><p>Experienced electrical professionals on every job.</p></div>
+      <div data-reveal style="--i:1"><svg class="i"><use href="#i-shield"/></svg><h3>Safety first</h3><p>Work done to safety codes, with the highest assurance of quality.</p></div>
+      <div data-reveal style="--i:2"><svg class="i"><use href="#i-clock"/></svg><h3>On time</h3><p>We aim to finish every job on time, big or small.</p></div>
+      <div data-reveal style="--i:3"><svg class="i"><use href="#i-map"/></svg><h3>Remote sites too</h3><p>We take on rural and remote jobs other companies turn down.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WE COME TO YOU ===================== -->
+<section class="section" id="areas" aria-labelledby="areas-title" style="padding-bottom:0">
+  <div class="wrap">
+    <p class="kicker">Areas we cover</p>
+    <h2 id="areas-title">We come to you</h2>
+    <p class="sub">Our fully equipped ute brings everything for the job to your door.</p>
+    <ul class="come__areas">
+      <li><svg class="i"><use href="#i-pin"/></svg>Geelong</li>
+      <li><svg class="i"><use href="#i-pin"/></svg>Bellarine Peninsula and Portarlington</li>
+      <li><svg class="i"><use href="#i-pin"/></svg>Surf Coast</li>
+      <li><svg class="i"><use href="#i-pin"/></svg>Regional and remote projects across Australia</li>
+    </ul>
+    <p class="come__note">Not sure if we cover your area? <a href="tel:0429400287">Call 0429 400 287</a>.</p>
+  </div>
+  <div class="panorama">
+    <svg id="scene" viewBox="40 150 1560 490" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="scene-title">
+      <title id="scene-title">Illustration: the JSM Electrical ute drives past road signs for Geelong, the Bellarine and the Surf Coast and parks beside a farmhouse.</title>
+      <defs>
+        <linearGradient id="sc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4F1EA"/><stop offset=".55" stop-color="#DCE3E2"/><stop offset="1" stop-color="#E9ECE6"/></linearGradient>
+        <pattern id="sc-corr" width="9" height="10" patternUnits="userSpaceOnUse"><rect width="9" height="10" fill="#171717"/><rect width="2.4" height="10" fill="#262626"/></pattern>
+        <pattern id="sc-ribs" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#A7AEAA"/><rect y="5.6" width="10" height="2.4" fill="#939A96"/></pattern>
+      </defs>
+      <rect x="-800" y="-400" width="3200" height="900" fill="url(#sc-sky)"/>
+      <path d="M-800 470C-100 420 100 360 330 392S760 350 980 384S1360 338 1640 380S2200 400 2400 430V560H-800Z" fill="#B7C3AE"/>
+      <g fill="#9AA79B"><rect x="360" y="372" width="700" height="6"/><path d="M376 378h6v40h-6zM456 378h6v36h-6zM536 378h6v33h-6zM616 378h6v32h-6zM696 378h6v33h-6zM776 378h6v35h-6zM856 378h6v37h-6zM936 378h6v40h-6zM1016 378h6v44h-6z"/></g>
+      <path d="M-800 470C0 446 400 452 700 450S1500 444 2400 458V560H-800Z" fill="#9DAD8B"/>
+      <use href="#gum-tree" x="-60" y="310" width="140" height="186" style="color:#5F7655"/>
+      <use href="#gum-tree" x="60" y="300" width="150" height="200" style="color:#6F8663"/>
+      <use href="#gum-tree" x="300" y="336" width="110" height="146" style="color:#7A8F6B"/>
+      <use href="#gum-tree" x="600" y="320" width="130" height="174" style="color:#6F8663"/>
+      <use href="#gum-tree" x="860" y="300" width="150" height="200" style="color:#5F7655"/>
+      <use href="#gum-tree" x="1530" y="296" width="160" height="214" style="color:#6F8663"/>
+      <rect x="-800" y="468" width="3200" height="44" fill="#8EA16A"/>
+      <path d="M-800 466H2400M-800 478H2400" stroke="#6B5843" fill="none"/>
+      <path d="M20 452h4v36h-4zM100 452h4v36h-4zM260 452h4v36h-4zM340 452h4v36h-4zM540 452h4v36h-4zM620 452h4v36h-4zM840 452h4v36h-4zM920 452h4v36h-4zM1000 452h4v36h-4zM1080 452h4v36h-4zM1540 452h4v36h-4zM1620 452h4v36h-4z" fill="#6B5843"/>
+      <g transform="translate(240 0)"><rect x="-3" y="296" width="6" height="200" fill="#8C8F91"/><rect x="-82" y="248" width="164" height="50" rx="5" fill="#245A3C"/><rect x="-77" y="253" width="154" height="40" rx="3" fill="none" stroke="#fff" stroke-width="2"/><text class="sign-t" x="0" y="280" text-anchor="middle">GEELONG</text></g>
+      <g transform="translate(490 0)"><rect x="-3" y="296" width="6" height="200" fill="#8C8F91"/><rect x="-92" y="248" width="184" height="50" rx="5" fill="#245A3C"/><rect x="-87" y="253" width="174" height="40" rx="3" fill="none" stroke="#fff" stroke-width="2"/><text class="sign-t" x="0" y="280" text-anchor="middle">BELLARINE</text></g>
+      <g transform="translate(760 0)"><rect x="-3" y="296" width="6" height="200" fill="#8C8F91"/><rect x="-98" y="248" width="196" height="50" rx="5" fill="#245A3C"/><rect x="-93" y="253" width="186" height="40" rx="3" fill="none" stroke="#fff" stroke-width="2"/><text class="sign-t" x="0" y="280" text-anchor="middle">SURF COAST</text></g>
+      <use href="#gum-tree" x="980" y="250" width="190" height="252" style="color:#5A7150"/>
+      <g transform="translate(1190 0)">
+        <path d="M28 442h8v50h-8zM128 442h8v50h-8zM228 442h8v50h-8zM300 442h8v50h-8z" fill="#6B5843"/>
+        <rect x="0" y="300" width="330" height="142" fill="url(#sc-corr)"/>
+        <polygon points="-16,302 16,248 314,248 346,302" fill="#1B1B1B"/>
+        <polygon points="40,296 58,262 168,262 150,296" fill="#2A3442"/><polygon points="174,296 192,262 302,262 284,296" fill="#2A3442"/>
+        <rect x="64" y="326" width="48" height="92" fill="#A9BCC4" stroke="#EDEDEA" stroke-width="4"/>
+        <rect x="196" y="340" width="70" height="40" fill="#A9BCC4" stroke="#EDEDEA" stroke-width="4"/>
+      </g>
+      <g transform="translate(1546 0)"><rect x="0" y="410" width="74" height="84" fill="url(#sc-ribs)"/><ellipse cx="37" cy="410" rx="37" ry="7" fill="#B7BDB9"/></g>
+      <rect x="-800" y="506" width="3200" height="106" fill="#B99C79"/>
+      <rect x="-800" y="546" width="3200" height="9" fill="#A6875F" opacity=".55"/>
+      <rect x="-800" y="582" width="3200" height="9" fill="#A6875F" opacity=".55"/>
+      <rect x="-800" y="610" width="3200" height="80" fill="#7E9459"/>
+
+      <!-- the ute: local units, ground at y=360; parked position set here so it shows without JavaScript -->
+      <g id="ute" transform="translate(560 320) scale(.75)">
+        <ellipse cx="445" cy="362" rx="400" ry="11" fill="#000" opacity=".16"/>
+        <g id="dust" opacity="0"><circle class="puff" cx="70" cy="338" r="14"/><circle class="puff p2" cx="46" cy="332" r="18"/><circle class="puff p3" cx="22" cy="342" r="12"/></g>
+        <g id="ute-body">
+          <g fill="#8E9193" stroke="#1E1E1E" stroke-width="1.2"><rect x="92" y="84" width="7" height="30"/><rect x="268" y="84" width="7" height="30"/><rect x="444" y="84" width="7" height="30"/><rect x="630" y="84" width="7" height="22"/><rect x="66" y="80" width="600" height="6" rx="2"/></g>
+          <rect x="48" y="66" width="676" height="7" rx="3.5" fill="#E26A2C" stroke="#1E1E1E"/>
+          <rect x="56" y="73" width="652" height="7" rx="3.5" fill="#C9561F" stroke="#1E1E1E"/>
+          <path d="M150 64h6v22h-6zM420 64h6v22h-6zM600 64h6v22h-6z" fill="#2A2A2A"/>
+          <rect x="64" y="112" width="414" height="146" rx="4" fill="#F6F6F3" stroke="#1E1E1E" stroke-width="2"/>
+          <rect x="76" y="120" width="390" height="102" fill="#FAFAF8" stroke="#A3A39E" stroke-width="1.4"/>
+          <rect x="100" y="206" width="22" height="7" rx="2" fill="#2A2A2A"/><rect x="420" y="206" width="22" height="7" rx="2" fill="#2A2A2A"/>
+          <rect x="76" y="226" width="192" height="26" fill="#FAFAF8" stroke="#A3A39E" stroke-width="1.2"/><rect x="274" y="226" width="192" height="26" fill="#FAFAF8" stroke="#A3A39E" stroke-width="1.2"/>
+          <rect x="56" y="258" width="430" height="14" rx="2" fill="#C9CBCB" stroke="#1E1E1E" stroke-width="1.6"/>
+          <rect x="56" y="226" width="9" height="26" rx="2" fill="#C8372D"/>
+          <rect x="130" y="272" width="360" height="14" fill="#2B2B2B"/>
+          <path d="M126 276H146V346H126Z" fill="#1E1E1E"/>
+          <path d="M486 300V118Q486 104 500 104H640Q652 104 660 114L716 190Q722 198 734 199L806 205Q838 208 840 232V278Q840 296 822 298H788A58 58 0 0 0 672 298H486Z" fill="#FAFAF8" stroke="#1E1E1E" stroke-width="2"/>
+          <path d="M502 120H636Q644 120 648 127L698 192H502Z" fill="#34414A"/>
+          <path d="M572 120H604L556 192H524Z" fill="#fff" opacity=".14"/>
+          <path d="M704 198V244M494 290H668" stroke="#B9B9B4" stroke-width="1.4" fill="none"/>
+          <rect x="510" y="200" width="28" height="6" rx="3" fill="#BDBDB8"/>
+          <path d="M688 168H708Q714 168 714 174V188Q714 194 708 194H694Z" fill="#1E1E1E"/>
+          <path d="M800 206L832 209Q838 210 838 218V224L804 221Z" fill="#E7E4D8" stroke="#1E1E1E" stroke-width="1.4"/>
+          <path d="M818 246H842V288Q842 298 832 298H818Z" fill="#2A2A2A"/>
+          <circle cx="830" cy="238" r="3.5" fill="#E39B2D"/>
+          <path d="M788 298A58 58 0 0 0 672 298" fill="none" stroke="#1E1E1E" stroke-width="6"/>
+          <rect x="486" y="296" width="186" height="6" fill="#2A2A2A"/>
+          <use href="#logo-full" x="508" y="208" width="146" height="62" style="color:#141414"/>
+          <text class="door-phone" x="581" y="287" text-anchor="middle">0429 400 287</text>
+        </g>
+        <g id="wheel-r"><circle cx="210" cy="314" r="46" fill="#1C1C1C"/><circle cx="210" cy="314" r="26" fill="#E6E6E2" stroke="#9A9A96" stroke-width="1.5"/><g fill="#B8B8B3"><circle cx="210" cy="297" r="4"/><circle cx="224.7" cy="305.5" r="4"/><circle cx="224.7" cy="322.5" r="4"/><circle cx="210" cy="331" r="4"/><circle cx="195.3" cy="322.5" r="4"/><circle cx="195.3" cy="305.5" r="4"/></g><circle cx="210" cy="314" r="7" fill="#9A9A96"/></g>
+        <g id="wheel-f"><circle cx="730" cy="314" r="46" fill="#1C1C1C"/><circle cx="730" cy="314" r="26" fill="#E6E6E2" stroke="#9A9A96" stroke-width="1.5"/><g fill="#B8B8B3"><circle cx="730" cy="297" r="4"/><circle cx="744.7" cy="305.5" r="4"/><circle cx="744.7" cy="322.5" r="4"/><circle cx="730" cy="331" r="4"/><circle cx="715.3" cy="322.5" r="4"/><circle cx="715.3" cy="305.5" r="4"/></g><circle cx="730" cy="314" r="7" fill="#9A9A96"/></g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ===================== REVIEWS (placeholder) ===================== -->
+<section class="section sand" aria-labelledby="rev-title">
+  <div class="wrap">
+    <div class="head"><p class="kicker">Reviews</p><h2 id="rev-title">What our customers say</h2><p class="sub"><span class="gap">[gap: real reviews — none on the current site]</span></p></div>
+    <div class="reviews">
+      <figure class="review"><div class="stars"><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg></div><p>Customer review: two or three sentences about the job and the result.</p><footer>Customer name · Suburb</footer></figure>
+      <figure class="review"><div class="stars"><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg></div><p>Customer review: two or three sentences about the job and the result.</p><footer>Customer name · Suburb</footer></figure>
+      <figure class="review"><div class="stars"><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg></div><p>Customer review: two or three sentences about the job and the result.</p><footer>Customer name · Suburb</footer></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BOOK ===================== -->
+<section class="section book-sec" id="book" aria-labelledby="book-title">
+  <div class="wrap book">
+    <div>
+      <p class="kicker">Book online</p>
+      <h2 id="book-title">Book an electrician</h2>
+      <p class="sub">It takes about a minute. We'll call you back to arrange a free consultation.</p>
+      <div class="call-card"><small>Rather talk to someone?</small><a href="tel:0429400287">0429 400 287</a></div>
+      <ul class="contact-list">
+        <li><svg class="i"><use href="#i-mail"/></svg><a href="mailto:jack@jsmelectrical.com.au">jack@jsmelectrical.com.au</a></li>
+        <li><svg class="i"><use href="#i-pin"/></svg><span>Based in Geelong, Victoria</span></li>
+        <li><svg class="i"><use href="#i-clock"/></svg><span class="gap">[gap: opening hours]</span></li>
+      </ul>
+    </div>
+
+    <form class="form" id="booking" novalidate>
+      <div class="progress"><span id="step-label">Step 1 of 3</span><span id="step-name">Service</span></div>
+      <div class="progress__bar" aria-hidden="true"><i id="step-bar"></i></div>
+
+      <fieldset class="step" data-step="1">
+        <legend>What do you need help with?</legend>
+        <p class="hint">Pick the closest match. You can explain more later.</p>
+        <div class="choices">
+          <div class="choice"><input type="radio" name="service" id="sv-homes" value="homes" data-label="Homes"><label for="sv-homes"><svg class="i"><use href="#i-home"/></svg>Homes</label></div>
+          <div class="choice"><input type="radio" name="service" id="sv-business" value="business" data-label="Business &amp; commercial"><label for="sv-business"><svg class="i"><use href="#i-building"/></svg>Business &amp; commercial</label></div>
+          <div class="choice"><input type="radio" name="service" id="sv-industrial" value="industrial" data-label="Industrial"><label for="sv-industrial"><svg class="i"><use href="#i-factory"/></svg>Industrial</label></div>
+          <div class="choice"><input type="radio" name="service" id="sv-renovation" value="renovation" data-label="Renovation"><label for="sv-renovation"><svg class="i"><use href="#i-reno"/></svg>Renovation</label></div>
+          <div class="choice"><input type="radio" name="service" id="sv-underground" value="underground" data-label="Underground"><label for="sv-underground"><svg class="i"><use href="#i-cable"/></svg>Underground</label></div>
+          <div class="choice"><input type="radio" name="service" id="sv-unsure" value="unsure" data-label="Not sure yet"><label for="sv-unsure"><svg class="i"><use href="#i-help"/></svg>Not sure yet</label></div>
+        </div>
+        <div class="nav-row"><button class="btn btn--lg" type="button" data-next>Next <svg class="i"><use href="#i-arrow"/></svg></button></div>
+      </fieldset>
+
+      <fieldset class="step" data-step="2" hidden>
+        <legend>Your details</legend>
+        <p class="hint">So we know who to call, and where the job is.</p>
+        <div class="picked"><span>Service: <b id="picked-service">Homes</b></span><button type="button" data-goto="1">Change</button></div>
+        <div class="field" id="fd-name"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" aria-describedby="e-name"><span class="err" id="e-name">Please enter your name.</span></div>
+        <div class="field" id="fd-phone"><label for="f-phone">Phone number</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-describedby="e-phone"><span class="err" id="e-phone">Please enter a phone number we can call, e.g. 0412 345 678.</span></div>
+        <div class="two">
+          <div class="field" id="fd-suburb"><label for="f-suburb">Suburb</label><input id="f-suburb" name="suburb" autocomplete="address-level2" aria-describedby="e-suburb"><span class="err" id="e-suburb">Please enter your suburb.</span></div>
+          <div class="field"><label for="f-email">Email <small>(optional)</small></label><input id="f-email" name="email" type="email" autocomplete="email"></div>
+        </div>
+        <div class="nav-row"><button class="btn btn--ghost" type="button" data-goto="1"><svg class="i"><use href="#i-back"/></svg>Back</button><button class="btn btn--lg" type="button" data-next>Next <svg class="i"><use href="#i-arrow"/></svg></button></div>
+      </fieldset>
+
+      <fieldset class="step" data-step="3" hidden>
+        <legend>When should we call you?</legend>
+        <p class="hint">We'll ring you back at a time that suits.</p>
+        <div class="choices times">
+          <div class="choice"><input type="radio" name="time" id="tm-1" value="morning" data-label="in the morning" checked><label for="tm-1">Morning<small>9am – 12pm</small></label></div>
+          <div class="choice"><input type="radio" name="time" id="tm-2" value="afternoon" data-label="in the afternoon"><label for="tm-2">Afternoon<small>12pm – 3pm</small></label></div>
+          <div class="choice"><input type="radio" name="time" id="tm-3" value="late" data-label="in the late afternoon"><label for="tm-3">Late afternoon<small>3pm – 5pm</small></label></div>
+          <div class="choice"><input type="radio" name="time" id="tm-4" value="evening" data-label="in the evening"><label for="tm-4">Evening<small>5pm – 7pm</small></label></div>
+        </div>
+        <div class="field" style="margin-top:18px"><label for="f-msg">Anything we should know? <small>(optional)</small></label><textarea id="f-msg" name="message" placeholder="For example: the lights in the kitchen keep tripping."></textarea></div>
+        <div class="nav-row"><button class="btn btn--ghost" type="button" data-goto="2"><svg class="i"><use href="#i-back"/></svg>Back</button><button class="btn btn--lg" type="submit">Send booking request</button></div>
+        <p class="privacy">We only use your details to contact you about this job.</p>
+      </fieldset>
+
+      <div class="done" id="done" hidden tabindex="-1">
+        <div class="tick"><svg class="i"><use href="#i-check"/></svg></div>
+        <h3 id="done-title">Thanks, we've got it.</h3>
+        <p id="done-text">We'll call you back to arrange your free consultation.</p>
+        <p>Need us sooner? Call <a href="tel:0429400287"><b>0429 400 287</b></a>.</p>
+      </div>
+      <p class="sr-only" aria-live="polite" id="step-live"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <a class="foot__logo" href="#top" aria-label="JSM Electrical, back to top"><svg viewBox="0 0 189 80" aria-hidden="true"><use href="#logo-full"/></svg></a>
+        <p>Local electricians for Geelong, the Bellarine Peninsula and the Surf Coast.</p>
+        <div class="foot__ids"><span class="gap">REC [gap]</span><span class="gap">ABN [gap]</span></div>
+      </div>
+      <div><h3>Services</h3><ul><li><a href="#services">Homes</a></li><li><a href="#services">Business &amp; commercial</a></li><li><a href="#services">Industrial</a></li><li><a href="#services">Renovations</a></li><li><a href="#services">Underground</a></li></ul></div>
+      <div><h3>Get in touch</h3><ul><li><a class="foot__phone" href="tel:0429400287">0429 400 287</a></li><li><a href="mailto:jack@jsmelectrical.com.au">jack@jsmelectrical.com.au</a></li><li>Geelong, Victoria</li><li><a href="#book">Book online</a></li></ul></div>
+      <div><h3>Company</h3><ul><li><a href="#how">How it works</a></li><li><a href="#areas">Areas we cover</a></li><li><span class="gap">Social links [gap]</span></li></ul></div>
+    </div>
+    <div class="foot__bar"><span>© 2026 JSM Electrical</span><nav aria-label="Legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></nav></div>
+  </div>
+</footer>
+
+<div class="actionbar" id="actionbar">
+  <a class="btn btn--outline" href="tel:0429400287"><svg class="i"><use href="#i-phone"/></svg>Call</a>
+  <a class="btn" href="#book">Book online</a>
+</div>
+
+<a class="proto" href="design.md">Design prototype v4 · design.md</a>
+
+<script>
+document.documentElement.classList.remove('no-js');
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  /* Gentle reveal, once (the mosaic is watched as a whole, since its tiles start clipped) */
+  const revealIO = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); revealIO.unobserve(e.target); }
+  }), { threshold: .15 });
+  $$('[data-reveal], [data-mosaic]').forEach(el => revealIO.observe(el));
+
+  /* Header: transparent over the hero photo, solid once scrolled */
+  const hdr = $('#hdr');
+  const onScroll = () => hdr.classList.toggle('is-solid', scrollY > 40);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Menu (phones and tablets) */
+  const menuBtn = $('.hdr__menu');
+  const setMenu = open => {
+    document.body.classList.toggle('menu-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    $('use', menuBtn).setAttribute('href', open ? '#i-close' : '#i-menu');
+    $('span', menuBtn).textContent = open ? 'Close' : 'Menu';
+  };
+  menuBtn.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+  $$('.mnav a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  /* Phones: hide the Call/Book bar while the booking form is on screen */
+  const bar = $('#actionbar');
+  new IntersectionObserver(es => bar.classList.toggle('is-hidden', es[0].isIntersecting), { threshold: .2 }).observe($('#book'));
+
+  /* The ute drives in once when the panorama comes into view */
+  const scene = $('#scene');
+  if (scene) {
+    const ute = $('#ute'), wr = $('#wheel-r'), wf = $('#wheel-f'), dust = $('#dust');
+    const S = .75, START = -620, PARK = 560;
+    const place = (x, speed) => {
+      ute.setAttribute('transform', `translate(${x.toFixed(1)} 320) scale(${S})`);
+      const a = ((x - START) / S / 46 * 57.2958).toFixed(1);
+      wr.setAttribute('transform', `rotate(${a} 210 314)`);
+      wf.setAttribute('transform', `rotate(${a} 730 314)`);
+      dust.setAttribute('opacity', (speed * .9).toFixed(2));
+    };
+    if (!reduce) {
+      place(START, 0);
+      const io = new IntersectionObserver(es => {
+        if (!es[0].isIntersecting) return;
+        io.disconnect();
+        const t0 = performance.now(), D = 3200;
+        const step = now => {
+          const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+          place(START + (PARK - START) * e, k < 1 ? 1 - e : 0);
+          if (k < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }, { threshold: .45 });
+      io.observe(scene);
+    }
+  }
+
+  /* Booking: three short steps */
+  const form = $('#booking');
+  if (form) {
+    const steps = $$('.step', form), names = ['Service', 'Your details', 'Call-back time'];
+    const live = $('#step-live'), hint1 = $('.hint', steps[0]), hint1Text = hint1.textContent;
+    let current = 1;
+    function show(n, focus = true) {
+      current = n;
+      steps.forEach(s => { s.hidden = Number(s.dataset.step) !== n; });
+      $('#done').hidden = true;
+      $('#step-label').textContent = `Step ${n} of 3`;
+      $('#step-name').textContent = names[n - 1];
+      $('#step-bar').style.width = `${n * 33.34}%`;
+      live.textContent = `Step ${n} of 3: ${names[n - 1]}`;
+      const picked = $('input[name=service]:checked', form);
+      if (picked) $('#picked-service').textContent = picked.dataset.label;
+      if (focus) {
+        const first = n === 2 ? $('#f-name') : steps[n - 1].querySelector('input:checked') || steps[n - 1].querySelector('input');
+        if (first) first.focus({ preventScroll: true });
+      }
+    }
+    const check = (id, ok) => { $('#fd-' + id).classList.toggle('is-bad', !ok); return ok; };
+    function valid(n) {
+      if (n === 1) {
+        const ok = !!$('input[name=service]:checked', form);
+        hint1.classList.toggle('is-bad', !ok);
+        hint1.textContent = ok ? hint1Text : 'Please choose one option to continue, or pick "Not sure yet".';
+        if (!ok) live.textContent = hint1.textContent;
+        return ok;
+      }
+      if (n === 2) {
+        const okName = check('name', $('#f-name').value.trim().length > 1);
+        const okPhone = check('phone', $('#f-phone').value.replace(/\D/g, '').length >= 8);
+        const okSuburb = check('suburb', $('#f-suburb').value.trim().length > 1);
+        const bad = form.querySelector('.is-bad input');
+        if (bad) bad.focus();
+        return okName && okPhone && okSuburb;
+      }
+      return true;
+    }
+    $$('[data-next]', form).forEach(b => b.addEventListener('click', () => { if (valid(current)) show(current + 1); }));
+    $$('[data-goto]', form).forEach(b => b.addEventListener('click', () => show(Number(b.dataset.goto))));
+    // choosing a service moves straight on to the details
+    $$('input[name=service]', form).forEach(r => r.addEventListener('change', () => { valid(1); setTimeout(() => show(2), reduce ? 0 : 250); }));
+    $$('#f-name, #f-phone, #f-suburb', form).forEach(inp => inp.addEventListener('input', () => inp.closest('.field').classList.remove('is-bad')));
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!valid(2)) { show(2); valid(2); return; }
+      const name = $('#f-name').value.trim().split(' ')[0], phone = $('#f-phone').value.trim(), time = $('input[name=time]:checked', form).dataset.label;
+      steps.forEach(s => { s.hidden = true; });
+      $('#step-label').textContent = 'Request sent';
+      $('#step-name').textContent = '';
+      $('#step-bar').style.width = '100%';
+      $('#done-title').textContent = `Thanks, ${name}. We've got your request.`;
+      $('#done-text').textContent = `We'll call you on ${phone} ${time} to arrange your free consultation.`;
+      const done = $('#done');
+      done.hidden = false;
+      done.focus();
+    });
+    // the quick-booking buttons and "Book this" buttons start the booking with that service already chosen
+    $$('[data-book]').forEach(t => t.addEventListener('click', e => {
+      const r = $(`input[name=service][value="${t.dataset.book}"]`, form);
+      if (!r) return;
+      e.preventDefault();
+      r.checked = true;
+      valid(1);
+      show(2, false);
+      $('#book').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      setTimeout(() => $('#f-name').focus({ preventScroll: true }), reduce ? 0 : 700);
+    }));
+    show(1, false);
+  }
+})();
+</script>
+</body>
+</html>
