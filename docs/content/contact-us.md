@@ -1,6 +1,6 @@
 # Contact Us
 
-URL: `/contact-us/` · Title tag: "Contact Us - JSM Electrical" · Meta description: none · OG description: "Contact Us We Service Homes, Residential, Commercial, Industrial and Underground Electrical Work with our Expertise Contact us for a scheduled consultation and we’ll get in touch with you as soon as possible. Schedule a Project Consultation."
+URL: `/contact-us/` · Title tag: "Contact Us - JSM Electrical" · Meta description: "Book an electrician in Geelong, the Bellarine or the Surf Coast. Call JSM Electrical on 0429 400 287, or send your details and we'll call you back." · OG description: "Contact Us We Service Homes, Residential, Commercial, Industrial and Underground Electrical Work with our Expertise Contact us for a scheduled consultation and we’ll get in touch with you as soon as possible. Schedule a Project Consultation."
 
 ## Contact Us
 

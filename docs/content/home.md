@@ -22,31 +22,31 @@ With the JSM Team on the job, you can rest assured that we are aiming for work t
 
 We conduct comprehensive engineering, repairs and preventive maintenance to businesses, shops and commercial areas. Our team of experienced electricians specialises in providing reliable and efficient electrical services for commercial properties. From routine maintenance to emergency repairs, we can help ensure your business operations run smoothly and uninterrupted.
 
-[Button: Learn More](https://jsmelectrical.com.au/services/business-and-commercial/)
+[Button: Learn More](https://jsmelectrical.com.au/business-and-commercial/)
 
 #### Industrial
 
 We service industrial electrical systems. Our team of skilled on-field technicians are specialists in providing expert repair and maintenance services for a wide range of industrial electrical applications. From troubleshooting complex electrical systems to performing routine maintenance, we can help keep your operations and equipment running efficiently and minimise electrical hazards.
 
-[Button: Learn More](https://jsmelectrical.com.au/services/industrial/)
+[Button: Learn More](https://jsmelectrical.com.au/industrial/)
 
-#### Homes
+#### Homes and Residential
 
 Are you experiencing electrical issues in your home? Our team of skilled electricians offers comprehensive repair and maintenance services tailored to your specific needs. From troubleshooting faulty wiring to upgrading outdated electrical systems, we provide reliable and efficient solutions to keep your home safe and its electrical system functioning optimally.
 
-[Button: Learn More](https://jsmelectrical.com.au/services/homes/)
+[Button: Learn More](https://jsmelectrical.com.au/homes-and-residential/)
 
 #### Renovation
 
 Our company can provide comprehensive electrical engineering services to ensure your home renovation project is completed safely and efficiently. From installing wiring and fixtures to designing its electrical structure, we offer a complete electrical solution to help complete your new home’s electrical systems.
 
-[Button: Learn More](https://jsmelectrical.com.au/services/renovations/)
+[Button: Learn More](https://jsmelectrical.com.au/renovations/)
 
 #### Underground
 
 We have on-site experience in working with telecommunication and public electrical work on the installation, repair and maintenance of underground electrical infrastructures. From locating and repairing faults to installing or reworking wiring and cables, we can provide efficient and effective solutions to complete such projects.
 
-[Button: Learn More](https://jsmelectrical.com.au/services/underground/)
+[Button: Learn More](https://jsmelectrical.com.au/underground/)
 
 ### Our Industry
 
@@ -58,6 +58,6 @@ We have on-site experience in working with telecommunication and public electric
 
 **Homes**
 
-We service the industries of Homes, Residential, Commercial and Industrial needs for electrical repairs, maintenance and engineering across the areas of Geelong and Portalington and the greater areas. We have also took on remote and regional work across Regional Australia in telecommunications, cabling and outdoor projects. Our team are experienced on indoor, outdoor and underground electrical systems.
+We service the industries of Homes, Residential, Commercial and Industrial needs for electrical repairs, maintenance and engineering across the areas of Geelong and Portarlington and the greater areas. We have also took on remote and regional work across Regional Australia in telecommunications, cabling and outdoor projects. Our team are experienced on indoor, outdoor and underground electrical systems.
 
 [Button: Contact Us Today](https://jsmelectrical.com.au/contact-us/)

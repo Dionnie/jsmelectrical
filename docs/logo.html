@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en-AU">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSM Electrical Logo Set</title>
+  <meta name="description" content="JSM Electrical's logo in black and grey, with its reversed, one-colour, monogram, favicon, app icon and social profile versions.">
+  <link rel="icon" href="assets/logo/favicon.ico" sizes="48x48">
+  <link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* tokens: the same as docs/design.md */
+    :root {
+      --ink: #141414;
+      --logo-grey: #9F9F9F;
+      --text: #23211D;
+      --muted: #5F5A51;
+      --bone: #F4F1EA;
+      --sand: #EAE4D7;
+      --line: #DCD4C4;
+      --white: #FFFFFF;
+      --gum: #2E4A36;
+      --soil: #6B4E37;
+      --f-head: "Archivo", ui-sans-serif, system-ui, sans-serif;
+      --f-body: "Inter", ui-sans-serif, system-ui, sans-serif
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bone);
+      color: var(--text);
+      font: 400 16px/1.6 var(--f-body)
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 40px)
+    }
+
+    header {
+      padding: clamp(40px, 6vw, 72px) 0 24px
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--f-head);
+      font-stretch: 108%;
+      color: var(--ink);
+      line-height: 1.1
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 780
+    }
+
+    h2 {
+      margin-bottom: 6px;
+      font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+      font-weight: 750
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 700
+    }
+
+    .kicker {
+      margin: 0 0 10px;
+      font: 700 12.5px/1.4 var(--f-head);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--soil)
+    }
+
+    .kicker::before {
+      content: "/ ";
+      color: var(--gum)
+    }
+
+    .lead {
+      max-width: 62ch;
+      margin: 12px 0 0;
+      color: var(--muted)
+    }
+
+    section {
+      padding: 40px 0;
+      border-top: 1px solid var(--line)
+    }
+
+    .sub {
+      max-width: 70ch;
+      margin: 0 0 24px;
+      color: var(--muted)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+      gap: 20px
+    }
+
+    .tile {
+      margin: 0;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden
+    }
+
+    .tile__art {
+      display: grid;
+      place-items: center;
+      min-height: 200px;
+      padding: 32px
+    }
+
+    .tile__art img {
+      display: block;
+      max-width: 100%;
+      height: auto
+    }
+
+    .on-light {
+      background: var(--white)
+    }
+
+    .on-bone {
+      background: var(--bone)
+    }
+
+    .on-dark {
+      background: var(--ink)
+    }
+
+    .tile figcaption {
+      padding: 16px 18px 18px;
+      border-top: 1px solid var(--line)
+    }
+
+    .tile p {
+      margin: 6px 0 0;
+      font-size: 14.5px;
+      color: var(--muted)
+    }
+
+    .files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px
+    }
+
+    .files a {
+      padding: 2px 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gum);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      text-decoration: none
+    }
+
+    .files a:hover {
+      border-color: var(--gum)
+    }
+
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px
+    }
+
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+      padding: 12px 16px 12px 12px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px
+    }
+
+    .swatch i {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      border: 1px solid var(--line)
+    }
+
+    .swatch b {
+      display: block;
+      color: var(--ink)
+    }
+
+    .swatch span {
+      font-size: 14px;
+      color: var(--muted)
+    }
+
+    .icons {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 28px
+    }
+
+    .icons figure {
+      margin: 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .icons img {
+      display: block;
+      margin: 0 auto 8px
+    }
+
+    .avatar img {
+      border-radius: 50%
+    }
+
+    .space {
+      position: relative;
+      display: inline-block;
+      padding: 15px;
+      background: repeating-linear-gradient(45deg, rgba(46, 74, 54, .12) 0 6px, transparent 6px 12px);
+      border: 1px dashed var(--gum);
+      border-radius: 4px
+    }
+
+    .space img {
+      display: block;
+      background: var(--white)
+    }
+
+    ul.rules {
+      margin: 0;
+      padding-left: 20px
+    }
+
+    ul.rules li+li {
+      margin-top: 6px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line)
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--sand)
+    }
+
+    tr:last-child td {
+      border-bottom: 0
+    }
+
+    td a,
+    footer a {
+      font-weight: 600;
+      color: var(--gum)
+    }
+
+    code {
+      font-size: 13.5px
+    }
+
+    .table-wrap {
+      overflow-x: auto
+    }
+
+    footer {
+      padding: 32px 0 56px;
+      font-size: 14px;
+      color: var(--muted)
+    }
+  </style>
+</head>
+
+<body>
+  <header class="wrap">
+    <p class="kicker">Logo set</p>
+    <h1>JSM Electrical logo</h1>
+    <p class="lead">The logo in its original black and grey, with a version for every place it appears: light and dark
+      backgrounds, one-colour jobs, small spaces, browser tabs, phone home screens and social profiles. Every file is
+      in <code>docs/assets/logo/</code>, as SVG (sharp at any size) and PNG.</p>
+  </header>
+
+  <main>
+    <section>
+      <div class="wrap">
+        <h2>Colours</h2>
+        <p class="sub">Two colours, as on the ute door: black for the letters, grey for the J's tick and the M's diagonal.
+          The grey never moves to other parts.</p>
+        <div class="swatches">
+          <div class="swatch"><i style="background:#141414"></i><div><b>Black</b><span>#141414</span></div></div>
+          <div class="swatch"><i style="background:#9F9F9F"></i><div><b>Grey</b><span>#9F9F9F</span></div></div>
+          <div class="swatch"><i style="background:#FFFFFF"></i><div><b>White</b><span>#FFFFFF, on dark backgrounds</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>The logo</h2>
+        <p class="sub">Use the two-colour logo wherever you can. Pick the version by the background it sits on.</p>
+        <div class="grid">
+          <figure class="tile">
+            <div class="tile__art on-light"><img src="assets/logo/jsm-logo.svg" width="260" alt="JSM Electrical logo in black and grey"></div>
+            <figcaption>
+              <h3>Primary</h3>
+              <p>White and light backgrounds: the website, quotes, invoices, uniforms.</p>
+              <div class="files"><a href="assets/logo/jsm-logo.svg">SVG</a><a href="assets/logo/jsm-logo-400.png">PNG 400</a><a href="assets/logo/jsm-logo-1200.png">PNG 1200</a></div>
+            </figcaption>
+          </figure>
+          <figure class="tile">
+            <div class="tile__art on-dark"><img src="assets/logo/jsm-logo-reversed.svg" width="260" alt="JSM Electrical logo in white and grey"></div>
+            <figcaption>
+              <h3>Reversed</h3>
+              <p>Black and dark backgrounds, and dark photos: the current website's black header, the footer.</p>
+              <div class="files"><a href="assets/logo/jsm-logo-reversed.svg">SVG</a><a href="assets/logo/jsm-logo-reversed-400.png">PNG 400</a><a href="assets/logo/jsm-logo-reversed-1200.png">PNG 1200</a></div>
+            </figcaption>
+          </figure>
+          <figure class="tile">
+            <div class="tile__art on-light"><img src="assets/logo/jsm-logo-black.svg" width="260" alt="JSM Electrical logo in black only"></div>
+            <figcaption>
+              <h3>One colour, black</h3>
+              <p>When only one colour is possible: single-colour print, stamps, embroidery, engraving.</p>
+              <div class="files"><a href="assets/logo/jsm-logo-black.svg">SVG</a><a href="assets/logo/jsm-logo-black-1200.png">PNG 1200</a></div>
+            </figcaption>
+          </figure>
+          <figure class="tile">
+            <div class="tile__art on-dark"><img src="assets/logo/jsm-logo-white.svg" width="260" alt="JSM Electrical logo in white only"></div>
+            <figcaption>
+              <h3>One colour, white</h3>
+              <p>One-colour jobs on dark materials, and faint watermarks on dark surfaces.</p>
+              <div class="files"><a href="assets/logo/jsm-logo-white.svg">SVG</a><a href="assets/logo/jsm-logo-white-1200.png">PNG 1200</a></div>
+            </figcaption>
+          </figure>
+          <figure class="tile">
+            <div class="tile__art on-light"><img src="assets/logo/jsm-monogram.svg" width="220" alt="JSM monogram in black and grey"></div>
+            <figcaption>
+              <h3>Monogram</h3>
+              <p>"JSM" without "ELECTRICAL", for small spaces where the name appears nearby. Reversed version included.</p>
+              <div class="files"><a href="assets/logo/jsm-monogram.svg">SVG</a><a href="assets/logo/jsm-monogram-800.png">PNG 800</a><a href="assets/logo/jsm-monogram-reversed.svg">Reversed SVG</a><a href="assets/logo/jsm-monogram-reversed-800.png">Reversed PNG</a></div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Icons</h2>
+        <p class="sub">The J alone, white with its grey tick on black, the same idea as the current favicon. It stays
+          readable at 16 pixels, where the full logo can't.</p>
+        <div class="icons">
+          <figure><img src="assets/logo/favicon.svg" width="16" height="16" alt="">16 px</figure>
+          <figure><img src="assets/logo/favicon.svg" width="32" height="32" alt="">32 px</figure>
+          <figure><img src="assets/logo/favicon.svg" width="64" height="64" alt="Favicon: a white J with a grey tick on a black rounded square">Favicon</figure>
+          <figure><img src="assets/logo/app-icon.svg" width="120" height="120" style="border-radius:26px" alt="App icon: the J on a black square, shown with a phone's rounded mask">App icon (phone mask)</figure>
+          <figure class="avatar"><img src="assets/logo/avatar-dark.svg" width="120" height="120" alt="Social profile picture: the reversed logo in a black circle">Profile, dark</figure>
+          <figure class="avatar"><img src="assets/logo/avatar-light.svg" width="120" height="120" style="border:1px solid var(--line)" alt="Social profile picture: the logo in a white circle">Profile, light</figure>
+        </div>
+        <div class="table-wrap" style="margin-top:28px">
+          <table>
+            <thead>
+              <tr><th>File</th><th>Size</th><th>Use</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><a href="assets/logo/favicon.svg">favicon.svg</a>, <a href="assets/logo/favicon.ico">favicon.ico</a></td><td>Any; 16, 32, 48</td><td>Browser tab icon</td></tr>
+              <tr><td><a href="assets/logo/app-icon-512.png">app-icon-512.png</a></td><td>512 × 512</td><td>WordPress Site Icon (Settings › General or Customise › Site Identity); Android home screen</td></tr>
+              <tr><td><a href="assets/logo/app-icon-192.png">app-icon-192.png</a></td><td>192 × 192</td><td>Android home screen (web app manifest)</td></tr>
+              <tr><td><a href="assets/logo/apple-touch-icon.png">apple-touch-icon.png</a></td><td>180 × 180</td><td>iPhone and iPad home screen</td></tr>
+              <tr><td><a href="assets/logo/app-icon.svg">app-icon.svg</a></td><td>Any</td><td>Source for other icon sizes. The J sits inside the central 80% circle, so masks never crop it</td></tr>
+              <tr><td><a href="assets/logo/avatar-dark-1080.png">avatar-dark-1080.png</a>, <a href="assets/logo/avatar-light-1080.png">avatar-light-1080.png</a></td><td>1080 × 1080</td><td>Facebook and Instagram profile pictures. The logo stays inside the circle crop</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Space and size</h2>
+        <p class="sub">Keep clear space around the logo at least the height of the J's grey tick (about 15% of the logo's
+          height) on every side. Nothing else goes inside it.</p>
+        <span class="space"><img src="assets/logo/jsm-logo.svg" width="240" alt="The logo with its clear space marked around it"></span>
+        <ul class="rules" style="margin-top:20px">
+          <li><b>Full logo:</b> at least 120 px wide on screen, 30 mm in print. Below that, "ELECTRICAL" gets too thin.</li>
+          <li><b>Monogram:</b> at least 60 px wide, 15 mm in print.</li>
+          <li><b>Smaller than that:</b> use the J icon.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Don't</h2>
+        <ul class="rules">
+          <li>Change the grey, or move it to other letters.</li>
+          <li>Stretch, rotate, outline, add shadows or recreate "ELECTRICAL" in another font.</li>
+          <li>Put the two-colour logo on a mid-grey background, where the grey disappears. Use a one-colour version.</li>
+          <li>Place it on a busy photo without a dark overlay behind it.</li>
+          <li>Use the old 189 × 80 PNG anywhere it's shown larger than that; it goes blurry.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>On the current website</h2>
+        <p class="sub">The set works on the live site today, before the revamp:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Where</th><th>File</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Header logo (black header)</td><td><a href="assets/logo/jsm-logo-reversed-400.png">jsm-logo-reversed-400.png</a>, shown at 189 px wide: sharp on high-resolution screens, and the grey returns</td></tr>
+              <tr><td>Site icon</td><td><a href="assets/logo/app-icon-512.png">app-icon-512.png</a> as the WordPress Site Icon; WordPress makes the favicon and home-screen sizes from it</td></tr>
+              <tr><td>Facebook and Instagram profile pictures</td><td><a href="assets/logo/avatar-dark-1080.png">avatar-dark-1080.png</a> or <a href="assets/logo/avatar-light-1080.png">avatar-light-1080.png</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">Rules and tokens: <a href="design.md">design.md</a>. Prototype: <a href="design.html">design.html</a>.</footer>
+</body>
+
+</html>

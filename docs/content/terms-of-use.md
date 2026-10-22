@@ -1,6 +1,6 @@
 # Terms of Use
 
-URL: `/terms-of-use/` · Title tag: "Terms of Use - JSM Electrical" · Meta description: none · OG description: "Terms of Use Terms of Use for JSM Electrical Acceptance of Terms By accessing and using the JSM Electrical website: https://jsmelectrical.com.au/ (the “Website”), you agree to be bound by these Terms of Use. If you do not agree with any part of these terms, you must not use this Website. Use of the Website * […]"
+URL: `/terms-of-use/` · Title tag: "Terms of Use - JSM Electrical" · Meta description: "The terms for using the JSM Electrical website: acceptable use, copyright in our content, and why information on our site isn't electrical advice." · OG description: "Terms of Use Terms of Use for JSM Electrical Acceptance of Terms By accessing and using the JSM Electrical website: https://jsmelectrical.com.au/ (the “Website”), you agree to be bound by these Terms of Use. If you do not agree with any part of these terms, you must not use this Website. Use of the Website * […]"
 
 ## Terms of Use
 
@@ -33,7 +33,7 @@ By accessing and using the JSM Electrical website: https://jsmelectrical.com.au/
 
 * This includes, but is not limited to, damages for loss of profits, data, or other intangible losses.
 
-* This website is a means of information, and contact, and does not provide electrical advise. Any electrical work should be conducted by a certified professional.
+* This website is a means of information, and contact, and does not provide electrical advice. Any electrical work should be conducted by a certified professional.
 
 - Australian Consumer Law
 * Nothing in these Terms of Use excludes, restricts, or modifies any rights or remedies that you may have under the Australian Consumer Law (ACL) or any other applicable law that cannot be excluded, restricted, or modified.

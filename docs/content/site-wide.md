@@ -1,14 +1,18 @@
 # Header and footer (identical on every page)
 
+Updated to the live site on 2026-10-22, after our fixes.
+
 ## Header
+
+Logo: `wp-content/uploads/2026/10/JSM-Eletrical-Logo.png` (189×80), alt "JSM Electrical", linking to the home page.
 
 Menu:
 - [Home](https://jsmelectrical.com.au/)
 - [About Us](https://jsmelectrical.com.au/about-us/)
 - [Services](#)
   - [Business and Commercial](https://jsmelectrical.com.au/business-and-commercial/)
-  - [Industrial](https://jsmelectrical.com.au/industrial-2/)
-  - [Homes](https://jsmelectrical.com.au/homes-2/)
+  - [Industrial](https://jsmelectrical.com.au/industrial/)
+  - [Homes and Residential](https://jsmelectrical.com.au/homes-and-residential/)
   - [Renovations](https://jsmelectrical.com.au/renovations/)
   - [Underground](https://jsmelectrical.com.au/underground/)
 - [Contact Us](https://jsmelectrical.com.au/contact-us/)
@@ -26,17 +30,19 @@ Menu:
 - [Contact Us](https://jsmelectrical.com.au/contact-us/)
 **Services**
 
-- [Commercial](https://jsmelectrical.com.au/services/business-and-commercial/)
-- [Industrial](https://jsmelectrical.com.au/services/industrial/)
-- [Homes](https://jsmelectrical.com.au/services/homes/)
-- [Renovation](https://jsmelectrical.com.au/services/renovations/)
-- [Underground](https://jsmelectrical.com.au/services/underground/)
+- [Commercial](https://jsmelectrical.com.au/business-and-commercial/)
+- [Industrial](https://jsmelectrical.com.au/industrial/)
+- [Homes](https://jsmelectrical.com.au/homes-and-residential/)
+- [Renovation](https://jsmelectrical.com.au/renovations/)
+- [Underground](https://jsmelectrical.com.au/underground/)
 **Contact Details**
 
 - [Geelong, Victoria](https://maps.app.goo.gl/6Dd95Xkt8aywgnDF7)
 - [jack@jsmelectrical.com.au](mailto:jack@jsmelectrical.com.au)
 - [0429 400 287](tel:0429400287)
-(not on desktop) **Facebook Twitter Youtube**
+
+Social icons: [Facebook](https://www.facebook.com/profile.php?id=61574767686775), [Instagram](https://www.instagram.com/jsm.electrical_/)
+
 © 2026 JSM Electrical. All rights reserved.
 
 **Powered by [Global Webforce](https://globalwebforce.com/)**

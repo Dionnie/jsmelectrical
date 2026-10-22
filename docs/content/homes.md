@@ -1,6 +1,6 @@
 # Homes
 
-URL: `/homes-2/` · Title tag: "Homes & Residential Area Electrical Services - JSM Electrical" · Meta description: "Homes & Residential Area Electrical services: installation, wiring, repairs etc., servicing Geelong, Bellarine Peninsula and the Surf Coast."
+URL: `/homes-and-residential/` (was `/homes-2/` until 2026-10-22; the old address now 301s here) · Title tag: "Homes & Residential Area Electrical Services - JSM Electrical" · Meta description: "Homes & Residential Area Electrical services: installation, wiring, repairs etc., servicing Geelong, Bellarine Peninsula and the Surf Coast."
 
 ## Electrical Services & Maintenance for Homes & Residential Areas
 
@@ -14,7 +14,7 @@ We diagnose and repair various electrical issues, such as faulty wiring, blown f
 
 Our regular maintenance services help prevent electrical problems and ensure optimal performance of your home’s electrical systems.
 
-**Electrical Repairs**
+**Upgrades and Modernisations**
 
 We can upgrade your home’s electrical system to accommodate new appliances, improve energy efficiency, or enhance your home’s aesthetic appeal.
 
