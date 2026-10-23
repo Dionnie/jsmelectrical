@@ -1,6 +1,6 @@
 # Industrial
 
-URL: `/industrial/` (was `/industrial-2/` until 2026-10-22; the old address now 301s here) · Title tag: "Industrial & Warehouse Electrical Services - JSM Electrical" · Meta description: "Factory & Warehouse Electrical services from installation, wiring, repairs etc., servicing Geelong, Bellarine Peninsula and the Surf Coast."
+URL: `/industrial/` · Title tag: "Industrial & Warehouse Electrical Services - JSM Electrical" · Meta description: "Factory & Warehouse Electrical services from installation, wiring, repairs etc., servicing Geelong, Bellarine Peninsula and the Surf Coast."
 
 ## Powering Your Industrial Operations with Expert Electrical Solutions
 

@@ -1,10 +1,8 @@
 # Header and footer (identical on every page)
 
-Updated to the live site on 2026-10-22, after our fixes.
-
 ## Header
 
-Logo: `wp-content/uploads/2026/10/JSM-Eletrical-Logo.png` (189×80), alt "JSM Electrical", linking to the home page.
+Logo: `wp-content/uploads/2026/10/jsm-logo-reversed-400.png` (400×170, white and grey), alt "JSM Electrical", linking to the home page.
 
 Menu:
 - [Home](https://jsmelectrical.com.au/)

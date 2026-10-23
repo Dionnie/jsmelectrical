@@ -1,6 +1,6 @@
 # JSM Electrical: revamp design
 
-The design system for the new site. This file holds the rules and tokens; `docs/design.html` is the working prototype that implements them (open it at `https://jsmelectrical.test/docs/design.html`). If the two disagree, this file wins and the prototype gets fixed. Page copy: `docs/content/`. Business facts and content gaps: `docs/company.md`.
+The design system for the new site. This file holds the rules and tokens; `docs/design.html` is the working prototype that implements them (open it at `https://jsmelectrical.test/docs/design.html`). If the two disagree, this file wins and the prototype gets fixed. Page copy: `docs/content/`. Business facts and content gaps: `docs/company.html`.
 
 ## Direction
 
@@ -46,9 +46,9 @@ Every design decision is checked against these:
 
 | File                                | What it is                                                                                                                                             |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `docs/assets/logo.svg`              | Theme source: black parts take `currentColor`, the grey parts `--logo-accent`. "JSM" traced from the live PNG; "ELECTRICAL" rebuilt                    |
-| `docs/assets/logo.png`              | Live header logo, 189×80, all white: the grey is lost. Replace with `logo/jsm-logo-reversed-400.png`                                                   |
-| `docs/assets/favicon.png`           | Live favicon, 256×256                                                                                                                                  |
+| `docs/assets/logo.svg`              | Theme source: black parts take `currentColor`, the grey parts `--logo-accent`. "JSM" traced from the original PNG; "ELECTRICAL" rebuilt                |
+| `docs/assets/logo.png`              | JSM's original logo PNG, 189×80, all white. Use the set in `logo/` instead                                                                            |
+| `docs/assets/favicon.png`           | JSM's original favicon, 256×256                                                                                                                       |
 | `docs/assets/logo/`                 | The logo set: every variant as SVG and PNG, plus favicon and app icons. Overview: `docs/logo.html`                                                     |
 | `docs/assets/photo-ute-viaduct.jpg` | JSM's white Toyota Hilux with the door logo, on a rural site; relit copy (1672×941). Hero; also cropped for the mosaic                                 |
 | `docs/assets/photo-ute-tools.jpg`   | JSM ute with the canopy open and tools on the shelves (1440×810). Mosaic and the booking background                                                    |
@@ -160,7 +160,7 @@ Never use it as a giant hero graphic.
 
 ## Services
 
-Five groups, one per kind of customer. Each replaces or extends a live page and keeps its web address where it can; every other old address 301s to its new home. Evidence for each line: `docs/content/`, `docs/instagram.md`, `docs/facebook.md`.
+Five groups, one per kind of customer. Each replaces or extends a live page and keeps its web address where it can; every other old address 301s to its new home. Evidence for each line: `docs/content/`, `docs/instagram.html`, `docs/facebook.html`.
 
 | Group | Who it's for | Covers | Web address |
 | --- | --- | --- | --- |

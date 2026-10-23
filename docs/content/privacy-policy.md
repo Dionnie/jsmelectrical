@@ -2,8 +2,6 @@
 
 URL: `/privacy-policy/` · Title tag: "Privacy Policy - JSM Electrical" · Meta description: "How JSM Electrical collects, uses and protects your personal information, and how our website uses cookies, Google Analytics and Google reCAPTCHA."
 
-Updated to the live site on 2026-10-22, after our fixes.
-
 ## Privacy Policy
 
 **Privacy Policy for JSM Electrical**
@@ -17,7 +15,13 @@ JSM Electrical (“we,” “us,” or “our”) is committed to protecting the
 We collect personal information when you voluntarily provide it to us through our Website, specifically through our enquiry contact form. The information we collect may include:
 
 * **Name:** To identify you and personalise our communications.
-* **Contact details:** Such as your phone number and email address, to respond to your enquiries.
+* **Email address:** To respond to your enquiries and send relevant communications.
+* **Phone number:** To contact you regarding your enquiry or requested services.
+* **Best time to call:** To help us contact you at a time that is convenient for you.
+* **Address, city and state:** To understand your location and assess your service requirements.
+* **Message:** To understand the nature of your enquiry, including any details about the electrical services you require.
+
+We use this information solely for the purposes of responding to your enquiries, communicating with you about our services, and providing relevant assistance. We take reasonable steps to protect your personal information from unauthorised access, misuse, disclosure or loss.
 
 ### 3. Use of Personal Information
 We use your personal information for the following purposes:
@@ -40,7 +44,7 @@ This data is used for analytical purposes and is intended to help us understand 
 ### 5. Cookies
 Cookies are small text files that a website stores in your browser. Our Website uses cookies for the purposes outlined below. We do not use cookies for advertising, and we do not sell information collected through them.
 
-* **Google Analytics (_ga, ga \*):** These cookies help us understand how visitors use our Website, as described above. They may last up to two years.
+* **Google Analytics (_ga, _ga_\*):** These cookies help us understand how visitors use our Website, as described above. They may last up to two years.
 * **Google reCAPTCHA (_GRECAPTCHA):** This cookie helps protect our enquiry form from spam by distinguishing human visitors from automated traffic. It may last up to six months.
 * **Cloudflare (__cf_bm):** Our Website runs through Cloudflare, which may set a security cookie to distinguish legitimate visitors from automated traffic. This cookie typically lasts 30 minutes.
 
