@@ -13,6 +13,7 @@ We also offer the digital services JSM don't use yet (social media, digital mark
 - `docs/company.html`: business and content facts. Read it before writing site copy or pages.
 - `docs/content/`: the live site's copy (2026-10-22), one file per page plus `site-wide.md` for the header and footer. Read only the page you're revamping.
 - `docs/facebook.html`, `docs/instagram.html`: what JSM's Facebook and Instagram showed (2026-10-22): reviews, REC number, team, about 20 dated jobs, partner builders. JSM run both themselves, and Facebook is out of date: confirm before using either on the site.
+- `docs/competitors.html`: who ranks on Google for Geelong electricians (2026-10-23): websites, social links, and what the revamp can borrow.
 - `docs/proposal.html`: the proposal for JSM, with the questions to ask them. Images: `docs/proposal/`.
 - `docs/logo.html`: the logo set (black and grey; reversed, one-colour, monogram, favicon, app icon, social profile), with its files in `docs/assets/logo/`.
 - `docs/design.md`: the revamp's design system (tokens, motion, components, page plan). Read it before building theme styles or templates. Prototype: `docs/design.html`.
